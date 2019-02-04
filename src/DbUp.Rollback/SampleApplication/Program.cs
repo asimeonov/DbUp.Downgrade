@@ -9,9 +9,9 @@ namespace SampleApplication
     {
         static void Main(string[] args)
         {
-            string instanceName = @"(local)\SqlExpress";
+            //string instanceName = @"(local)\SqlExpress";
             // Uncomment the following line to run against sql local db instance.
-            // string instanceName = @"(localdb)\Projects";
+             string instanceName = @"localhost";
 
             var connectionString = $"Data Source={instanceName};Initial Catalog=SampleApplication;Integrated Security=True;Pooling=False";
 
@@ -20,7 +20,7 @@ namespace SampleApplication
             EnsureDatabase.For.SqlDatabase(connectionString);
 
             var upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString, null)
+                .SqlDatabase(connectionString)
                 .WithScriptsAndRollbackScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), RollbackScriptsSettings.FromFolder())
                 .LogToConsole();
 

@@ -1,10 +1,6 @@
 ﻿using DbUp.Builder;
-using DbUp.Engine;
 using DbUp.ScriptProviders;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace DbUp.Rollback
 {
@@ -16,7 +12,7 @@ namespace DbUp.Rollback
             string schema = null)
         {
             builder.Configure(c => c.ScriptProviders.Add(new EmbeddedScriptProvider(assembly, rollbackScriptsSettings.ScriptsFilter)));
-            builder.Configure(c => c.Journal = new TableWithRollbackJournal(() => c.ConnectionManager, () => c.Log, schema, "SchemaVersions",
+            builder.Configure(c => c.Journal = new SqlTableWithRollbackJournal(() => c.ConnectionManager, () => c.Log, schema, "SchemaVersions",
                 new EmbeddedScriptProvider(assembly, rollbackScriptsSettings.RollbackScriptsFilter)));
 
             return builder;
