@@ -37,11 +37,13 @@ namespace DbUp.Rollback
             string appVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             try
             {
+                var configurationTransactionMode = _connectionManager.TransactionMode;
+                _connectionManager.TransactionMode = TransactionMode.SingleTransaction;
                 using (var opration = _connectionManager.OperationStarting(_log, new List<SqlScript>()))
                 {
                     var allScripts = _scriptProviders.SelectMany(scriptProvider => scriptProvider.GetScripts(_connectionManager));
 
-                    var executedScripts = _journal.GetExecutedScripts();
+                    var executedScripts = _journal.GetExecutedScriptsInReverseOrder();
 
                     foreach (var executedScript in executedScripts)
                     {
@@ -53,6 +55,7 @@ namespace DbUp.Rollback
                         }
                     }
                 }
+                _connectionManager.TransactionMode = configurationTransactionMode;
             }
             catch (Exception e)
             {

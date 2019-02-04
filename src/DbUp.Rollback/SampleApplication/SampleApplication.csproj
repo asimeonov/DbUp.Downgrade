@@ -7,10 +7,16 @@
 
   <ItemGroup>
     <None Remove="RollbackScripts\Script0004 - Redirects.sql" />
+    <None Remove="RollbackScripts\Script0005 - Redirects add time to travel.sql" />
     <None Remove="Scripts\Script0001 - Create tables.sql" />
     <None Remove="Scripts\Script0002 - Default feed.sql" />
     <None Remove="Scripts\Script0003 - Settings.sql" />
     <None Remove="Scripts\Script0004 - Redirects.sql" />
+    <None Remove="Scripts\Script0005 - Redirects add time to travel.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="RollbackScripts\Script0005 - Redirects add time to travel.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +24,6 @@
     <EmbeddedResource Include="Scripts\Script0001 - Create tables.sql" />
     <EmbeddedResource Include="Scripts\Script0002 - Default feed.sql" />
     <EmbeddedResource Include="Scripts\Script0003 - Settings.sql" />
-    <EmbeddedResource Include="Scripts\Script0004 - Redirects.sql" />
   </ItemGroup>
 
   <ItemGroup>

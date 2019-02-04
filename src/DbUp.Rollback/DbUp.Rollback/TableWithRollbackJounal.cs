@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace DbUp.Rollback
 {
-    public class TableWithRollbackJournal : TableJournal
+    public abstract class TableWithRollbackJournal : TableJournal
     {
         private readonly List<SqlScript> _rollbackScripts;
 
@@ -20,35 +20,57 @@ namespace DbUp.Rollback
             Func<IUpgradeLog> logger,
             string schema,
             string table,
-            EmbeddedScriptProvider rollbackScriptsProvider)
+            IScriptProvider rollbackScriptsProvider)
             : base(connectionManager, logger, new SqlServerObjectParser(), schema, table)
         {
             _rollbackScripts = rollbackScriptsProvider.GetScripts(connectionManager()).ToList();
         }
 
+        protected abstract string CreateSchemaTableWithRollbackSql(string quotedPrimaryKeyName);
+
         protected override string CreateSchemaTableSql(string quotedPrimaryKeyName)
         {
-            return
-                $@"create table {FqSchemaTableName} (
-                    [Id] int identity(1,1) not null constraint {quotedPrimaryKeyName} primary key,
-                    [ScriptName] nvarchar(255) not null,
-                    [Applied] datetime not null,
-                    [RollbackScript] nvarchar(MAX) null)";
+            return CreateSchemaTableWithRollbackSql(quotedPrimaryKeyName);
         }
+
+        protected abstract string GetInsertJournalEntrySql(string scriptName, string applied, string rollbackScript);
 
         protected override string GetInsertJournalEntrySql(string scriptName, string applied)
         {
-            throw new NotSupportedException();
+            return GetInsertJournalEntrySql(scriptName, applied, null);
         }
 
-        protected string GetInsertJournalEntrySql(string scriptName, string applied, string rollbackScript)
-        {
-            return $"insert into {FqSchemaTableName} (ScriptName, Applied, RollbackScript) values ({scriptName}, {applied}, {rollbackScript})";
-        }
+        protected abstract string GetExecutedScriptsInReverseOrderSql();
 
-        protected override string GetJournalEntriesSql()
+        public string[] GetExecutedScriptsInReverseOrder()
         {
-            return $"select [ScriptName] from {FqSchemaTableName} order by [ScriptName]";
+            return ConnectionManager().ExecuteCommandsWithManagedConnection(dbCommandFactory =>
+            {
+                if (DoesTableExist(dbCommandFactory))
+                {
+                    Log().WriteInformation("Fetching list of already executed scripts ordered by Date desc.");
+
+                    var scripts = new List<string>();
+
+                    using (var command = dbCommandFactory())
+                    {
+                        command.CommandText = GetExecutedScriptsInReverseOrderSql();
+                        command.CommandType = CommandType.Text;
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                                scripts.Add((string)reader[0]);
+                        }
+                    }
+
+                    return scripts.ToArray();
+                }
+                else
+                {
+                    Log().WriteInformation("Journal table does not exist");
+                    return new string[0];
+                }
+            });
         }
 
         protected new IDbCommand GetInsertScriptCommand(Func<IDbCommand> dbCommandFactory, SqlScript script)
@@ -96,22 +118,25 @@ namespace DbUp.Rollback
             }
         }
 
+        protected abstract string GetRollbackScriptSql(string scriptName);
+
         public virtual string GetRollbackScript(string scriptName)
         {
             Log().WriteInformation("Newer (unrecognized) script '{0}' found, searching for corresponding revert script.", scriptName);
-            string sqlCommand = $"select [RollbackScript] from {FqSchemaTableName} where [ScriptName] = '{scriptName}'";
 
             return ConnectionManager().ExecuteCommandsWithManagedConnection(dbCommandFactory =>
             {
                 using (var command = dbCommandFactory())
                 {
-                    command.CommandText = sqlCommand;
+                    command.CommandText = GetRollbackScriptSql(scriptName);
                     command.CommandType = CommandType.Text;
 
                     return (string)command.ExecuteScalar();
                 }
             });
         }
+
+        protected abstract string DeleteScriptFromJournalSql(string scriptName);
 
         public virtual void RevertScript(string scriptName, string rollbackScript, string appVersion)
         {
@@ -134,7 +159,7 @@ namespace DbUp.Rollback
 
                         command.ExecuteNonQuery();
 
-                        command.CommandText = $"delete from {FqSchemaTableName} where [ScriptName] = '{scriptName}'";
+                        command.CommandText = DeleteScriptFromJournalSql(scriptName);
 
                         command.ExecuteNonQuery();
                     }
@@ -146,6 +171,8 @@ namespace DbUp.Rollback
                 throw;
             }
         }
+
+        protected abstract string AddRollbackScriptColumnSql();
 
         public override void EnsureTableExistsAndIsLatestVersion(Func<IDbCommand> dbCommandFactory)
         {
@@ -159,7 +186,7 @@ namespace DbUp.Rollback
                 {
                     using (var command = dbCommandFactory())
                     {
-                        command.CommandText = $"alter table {FqSchemaTableName} add [RollbackScript] nvarchar(MAX)";
+                        command.CommandText = AddRollbackScriptColumnSql();
                         command.CommandType = CommandType.Text;
 
                         command.ExecuteNonQuery();
@@ -185,9 +212,6 @@ namespace DbUp.Rollback
             }
         }
 
-        protected virtual string DoesRollbackColumnExistSql()
-        {
-            return $"SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{UnquotedSchemaTableName}' AND COLUMN_NAME = 'RollbackScript'";
-        }
+        protected abstract string DoesRollbackColumnExistSql();
     }
 }
