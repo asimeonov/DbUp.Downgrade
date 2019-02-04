@@ -1,21 +1,22 @@
 ﻿using DbUp.Engine;
 using DbUp.Engine.Output;
 using DbUp.Engine.Transactions;
+using DbUp.SqlServer;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DbUp.Rollback
 {
-    public class SqlTableWithRollbackJournal : TableWithRollbackJournal
+    public class SqlRollbackEnabledTableJournal : RollbackEnabledTableJournal
     {
-        public SqlTableWithRollbackJournal(
+        public SqlRollbackEnabledTableJournal(
             Func<IConnectionManager> connectionManager,
             Func<IUpgradeLog> logger,
             string schema,
             string table,
             IScriptProvider rollbackScriptsProvider)
-            : base(connectionManager, logger, schema, table, rollbackScriptsProvider)
+            : base(connectionManager, logger, new SqlServerObjectParser(), schema, table, rollbackScriptsProvider)
         {
 
         }

@@ -12,7 +12,7 @@ namespace DbUp.Rollback
             string schema = null)
         {
             builder.Configure(c => c.ScriptProviders.Add(new EmbeddedScriptProvider(assembly, rollbackScriptsSettings.ScriptsFilter)));
-            builder.Configure(c => c.Journal = new SqlTableWithRollbackJournal(() => c.ConnectionManager, () => c.Log, schema, "SchemaVersions",
+            builder.Configure(c => c.Journal = new SqlRollbackEnabledTableJournal(() => c.ConnectionManager, () => c.Log, schema, "SchemaVersions",
                 new EmbeddedScriptProvider(assembly, rollbackScriptsSettings.RollbackScriptsFilter)));
 
             return builder;

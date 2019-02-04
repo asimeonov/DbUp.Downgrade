@@ -13,7 +13,7 @@ namespace DbUp.Rollback
     {
         public UpgradeEngine UpgradeEngine { get; private set; }
 
-        private TableWithRollbackJournal _journal;
+        private RollbackEnabledTableJournal _journal;
         private List<IScriptProvider> _scriptProviders;
         private IConnectionManager _connectionManager;
         private IUpgradeLog _log;
@@ -22,7 +22,7 @@ namespace DbUp.Rollback
         {
             builder.Configure(c =>
             {
-                _journal = c.Journal as TableWithRollbackJournal;
+                _journal = c.Journal as RollbackEnabledTableJournal;
                 _scriptProviders = c.ScriptProviders;
                 _connectionManager = c.ConnectionManager;
                 _log = c.Log;

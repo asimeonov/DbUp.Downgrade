@@ -11,17 +11,18 @@ using System.Linq;
 
 namespace DbUp.Rollback
 {
-    public abstract class TableWithRollbackJournal : TableJournal
+    public abstract class RollbackEnabledTableJournal : TableJournal
     {
         private readonly List<SqlScript> _rollbackScripts;
 
-        public TableWithRollbackJournal(
+        public RollbackEnabledTableJournal(
             Func<IConnectionManager> connectionManager,
             Func<IUpgradeLog> logger,
+            ISqlObjectParser sqlObjectParser,
             string schema,
             string table,
             IScriptProvider rollbackScriptsProvider)
-            : base(connectionManager, logger, new SqlServerObjectParser(), schema, table)
+            : base(connectionManager, logger, sqlObjectParser, schema, table)
         {
             _rollbackScripts = rollbackScriptsProvider.GetScripts(connectionManager()).ToList();
         }

@@ -9,9 +9,8 @@ namespace SampleApplication
     {
         static void Main(string[] args)
         {
-            //string instanceName = @"(local)\SqlExpress";
+            string instanceName = @"(local)\SqlExpress";
             // Uncomment the following line to run against sql local db instance.
-             string instanceName = @"localhost";
 
             var connectionString = $"Data Source={instanceName};Initial Catalog=SampleApplication;Integrated Security=True;Pooling=False";
 
