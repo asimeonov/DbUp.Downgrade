@@ -9,10 +9,11 @@ namespace DbUp.Rollback
         public static UpgradeEngineBuilder WithScriptsAndRollbackScriptsEmbeddedInAssembly(this UpgradeEngineBuilder builder,
             Assembly assembly,
             RollbackScriptsSettings rollbackScriptsSettings,
-            string schema = null)
+            string schema = null, 
+            string table = "SchemaVersions")
         {
             builder.Configure(c => c.ScriptProviders.Add(new EmbeddedScriptProvider(assembly, rollbackScriptsSettings.ScriptsFilter)));
-            builder.Configure(c => c.Journal = new SqlRollbackEnabledTableJournal(() => c.ConnectionManager, () => c.Log, schema, "SchemaVersions",
+            builder.Configure(c => c.Journal = new SqlRollbackEnabledTableJournal(() => c.ConnectionManager, () => c.Log, schema, table,
                 new EmbeddedScriptProvider(assembly, rollbackScriptsSettings.RollbackScriptsFilter)));
 
             return builder;
