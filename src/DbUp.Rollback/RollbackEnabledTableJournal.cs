@@ -139,7 +139,7 @@ namespace DbUp.Rollback
 
         protected abstract string DeleteScriptFromJournalSql(string scriptName);
 
-        public virtual void RevertScript(string scriptName, string rollbackScript, string appVersion)
+        public virtual void RevertScript(string scriptName, string rollbackScript)
         {
             if (string.IsNullOrWhiteSpace(rollbackScript))
             {
@@ -147,7 +147,7 @@ namespace DbUp.Rollback
                 return;
             }
 
-            Log().WriteInformation("Script '{0}' was not recognized in version {1} and will be reverted.", scriptName, appVersion);
+            Log().WriteInformation("Script '{0}' was not recognized in cuurent version and will be reverted.", scriptName);
 
             try
             {

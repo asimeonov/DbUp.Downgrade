@@ -34,7 +34,7 @@ namespace DbUp.Rollback
         public DatabaseUpgradeResult PerformUpgrade()
         {
             List<SqlScript> downgradeScripts = new List<SqlScript>();
-            string appVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
             try
             {
                 var configurationTransactionMode = _connectionManager.TransactionMode;
@@ -51,7 +51,7 @@ namespace DbUp.Rollback
                         {
                             string rollbackScript = _journal.GetRollbackScript(executedScript);
 
-                            _journal.RevertScript(executedScript, rollbackScript, appVersion);
+                            _journal.RevertScript(executedScript, rollbackScript);
                         }
                     }
                 }
