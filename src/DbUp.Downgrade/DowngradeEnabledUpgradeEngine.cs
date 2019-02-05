@@ -5,24 +5,26 @@ using DbUp.Engine.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-namespace DbUp.Rollback
+namespace DbUp.Downgrade
 {
-    public class RollbackEnabledUpgradeEngine
+    public class DowngradeEnabledUpgradeEngine
     {
         public UpgradeEngine UpgradeEngine { get; private set; }
 
-        private RollbackEnabledTableJournal _journal;
+        private DowngradeEnabledTableJournal _journal;
         private List<IScriptProvider> _scriptProviders;
         private IConnectionManager _connectionManager;
         private IUpgradeLog _log;
+        private readonly bool _autoDowngradeEnabled;
 
-        public RollbackEnabledUpgradeEngine(UpgradeEngineBuilder builder)
+        public DowngradeEnabledUpgradeEngine(UpgradeEngineBuilder builder, bool autoDowngradeEnabled)
         {
+            _autoDowngradeEnabled = autoDowngradeEnabled;
+
             builder.Configure(c =>
             {
-                _journal = c.Journal as RollbackEnabledTableJournal;
+                _journal = c.Journal as DowngradeEnabledTableJournal;
                 _scriptProviders = c.ScriptProviders;
                 _connectionManager = c.ConnectionManager;
                 _log = c.Log;
@@ -31,7 +33,7 @@ namespace DbUp.Rollback
             UpgradeEngine = builder.Build();
         }
 
-        public DatabaseUpgradeResult PerformUpgrade()
+        public DatabaseUpgradeResult PerformDowngrade()
         {
             List<SqlScript> downgradeScripts = new List<SqlScript>();
 
@@ -49,17 +51,32 @@ namespace DbUp.Rollback
                     {
                         if (!allScripts.Any(s => s.Name.Equals(executedScript)))
                         {
-                            string rollbackScript = _journal.GetRollbackScript(executedScript);
+                            string downgradeScript = _journal.GetDowngradeScript(executedScript);
 
-                            _journal.RevertScript(executedScript, rollbackScript);
+                            _journal.RevertScript(executedScript, downgradeScript);
                         }
                     }
                 }
                 _connectionManager.TransactionMode = configurationTransactionMode;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return new DatabaseUpgradeResult(downgradeScripts, false, e);
+                return new DatabaseUpgradeResult(downgradeScripts, false, ex);
+            }
+
+            return new DatabaseUpgradeResult(downgradeScripts, true, null);
+        }
+
+        public DatabaseUpgradeResult PerformUpgrade()
+        {
+            if (_autoDowngradeEnabled)
+            {
+                var downgradeResult = PerformDowngrade();
+
+                if (!downgradeResult.Successful)
+                {
+                    return downgradeResult;
+                }
             }
 
             return UpgradeEngine.PerformUpgrade();

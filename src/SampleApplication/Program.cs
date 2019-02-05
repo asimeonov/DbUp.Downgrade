@@ -1,5 +1,5 @@
 ﻿using DbUp;
-using DbUp.Rollback;
+using DbUp.Downgrade;
 using System;
 using System.Reflection;
 
@@ -11,6 +11,7 @@ namespace SampleApplication
         {
             string instanceName = @"(local)\SqlExpress";
             // Uncomment the following line to run against sql local db instance.
+            instanceName = "localhost";
 
             var connectionString = $"Data Source={instanceName};Initial Catalog=SampleApplication;Integrated Security=True;Pooling=False";
 
@@ -20,10 +21,10 @@ namespace SampleApplication
 
             var upgradeEngineBuilder = DeployChanges.To
                 .SqlDatabase(connectionString)
-                .WithScriptsAndRollbackScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), RollbackScriptsSettings.FromFolder())
+                .WithScriptsAndDowngradeScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), DowngradeScriptsSettings.FromFolder())
                 .LogToConsole();
 
-            var upgrader = upgradeEngineBuilder.BuildWithRollbackEnabled();
+            var upgrader = upgradeEngineBuilder.BuildWithDowngrade(true);
 
             var result = upgrader.PerformUpgrade();
 

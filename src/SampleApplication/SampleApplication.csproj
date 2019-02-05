@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="RollbackScripts\Script0004 - Redirects.sql" />
-    <None Remove="RollbackScripts\Script0005 - Redirects add time to travel.sql" />
+    <None Remove="DowngradeScripts\Script0004 - Redirects.sql" />
+    <None Remove="DowngradeScripts\Script0005 - Redirects add time to travel.sql" />
     <None Remove="Scripts\Script0001 - Create tables.sql" />
     <None Remove="Scripts\Script0002 - Default feed.sql" />
     <None Remove="Scripts\Script0003 - Settings.sql" />
@@ -16,11 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="RollbackScripts\Script0005 - Redirects add time to travel.sql" />
+    <EmbeddedResource Include="DowngradeScripts\Script0005 - Redirects add time to travel.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="RollbackScripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="DowngradeScripts\Script0004 - Redirects.sql" />
     <EmbeddedResource Include="Scripts\Script0001 - Create tables.sql" />
     <EmbeddedResource Include="Scripts\Script0002 - Default feed.sql" />
     <EmbeddedResource Include="Scripts\Script0003 - Settings.sql" />
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DbUp.Rollback\DbUp.Rollback.csproj" />
+    <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
   </ItemGroup>
 
 </Project>

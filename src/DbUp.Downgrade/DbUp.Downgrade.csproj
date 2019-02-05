@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <Authors>Atanas Simeonov</Authors>
     <Description>Extends DbUp pipeline adding capability to store revert scripts in Schema Version table. In case that older version is found newer versions are rolled back.</Description>
-    <Version>1.0.0-prev1</Version>
+    <PackageProjectUrl>https://github.com/asimeonov/DbUp.Downgrade</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/asimeonov/DbUp.Downgrade</RepositoryUrl>
+    <RepositoryType />
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

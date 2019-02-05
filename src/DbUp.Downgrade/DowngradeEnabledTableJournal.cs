@@ -1,40 +1,38 @@
 ﻿using DbUp.Engine;
 using DbUp.Engine.Output;
 using DbUp.Engine.Transactions;
-using DbUp.ScriptProviders;
-using DbUp.SqlServer;
 using DbUp.Support;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace DbUp.Rollback
+namespace DbUp.Downgrade
 {
-    public abstract class RollbackEnabledTableJournal : TableJournal
+    public abstract class DowngradeEnabledTableJournal : TableJournal
     {
-        private readonly List<SqlScript> _rollbackScripts;
+        private readonly List<SqlScript> _downgradeScripts;
 
-        public RollbackEnabledTableJournal(
+        public DowngradeEnabledTableJournal(
             Func<IConnectionManager> connectionManager,
             Func<IUpgradeLog> logger,
             ISqlObjectParser sqlObjectParser,
             string schema,
             string table,
-            IScriptProvider rollbackScriptsProvider)
+            IScriptProvider downgradeScriptsProvider)
             : base(connectionManager, logger, sqlObjectParser, schema, table)
         {
-            _rollbackScripts = rollbackScriptsProvider.GetScripts(connectionManager()).ToList();
+            _downgradeScripts = downgradeScriptsProvider.GetScripts(connectionManager()).ToList();
         }
 
-        protected abstract string CreateSchemaTableWithRollbackSql(string quotedPrimaryKeyName);
+        protected abstract string CreateSchemaTableWithDowngradeSql(string quotedPrimaryKeyName);
 
         protected override string CreateSchemaTableSql(string quotedPrimaryKeyName)
         {
-            return CreateSchemaTableWithRollbackSql(quotedPrimaryKeyName);
+            return CreateSchemaTableWithDowngradeSql(quotedPrimaryKeyName);
         }
 
-        protected abstract string GetInsertJournalEntrySql(string scriptName, string applied, string rollbackScript);
+        protected abstract string GetInsertJournalEntrySql(string scriptName, string applied, string downgradeScript);
 
         protected override string GetInsertJournalEntrySql(string scriptName, string applied)
         {
@@ -88,24 +86,24 @@ namespace DbUp.Rollback
             appliedParam.Value = DateTime.Now;
             command.Parameters.Add(appliedParam);
 
-            var rollbackScriptParam = command.CreateParameter();
-            rollbackScriptParam.ParameterName = "rollbackScript";
+            var downgradeScriptParam = command.CreateParameter();
+            downgradeScriptParam.ParameterName = "downgradeScript";
 
             string[] executingStringParts = script.Name.Replace(".sql", string.Empty).Split('.');
-            var correspondingRollbackScript = _rollbackScripts.SingleOrDefault(s => s.Name.Contains(executingStringParts.Last()));
+            var correspondingDowngradeScript = _downgradeScripts.SingleOrDefault(s => s.Name.Contains(executingStringParts.Last()));
 
-            if (correspondingRollbackScript != null)
+            if (correspondingDowngradeScript != null)
             {
-                rollbackScriptParam.Value = correspondingRollbackScript.Contents;
+                downgradeScriptParam.Value = correspondingDowngradeScript.Contents;
             }
             else
             {
-                rollbackScriptParam.Value = DBNull.Value;
+                downgradeScriptParam.Value = DBNull.Value;
             }
 
-            command.Parameters.Add(rollbackScriptParam);
+            command.Parameters.Add(downgradeScriptParam);
 
-            command.CommandText = GetInsertJournalEntrySql("@scriptName", "@applied", "@rollbackScript");
+            command.CommandText = GetInsertJournalEntrySql("@scriptName", "@applied", "@downgradeScript");
             command.CommandType = CommandType.Text;
             return command;
         }
@@ -119,9 +117,9 @@ namespace DbUp.Rollback
             }
         }
 
-        protected abstract string GetRollbackScriptSql(string scriptName);
+        protected abstract string GetDowngradeScriptSql(string scriptName);
 
-        public virtual string GetRollbackScript(string scriptName)
+        public virtual string GetDowngradeScript(string scriptName)
         {
             Log().WriteInformation("Newer (unrecognized) script '{0}' found, searching for corresponding revert script.", scriptName);
 
@@ -129,7 +127,7 @@ namespace DbUp.Rollback
             {
                 using (var command = dbCommandFactory())
                 {
-                    command.CommandText = GetRollbackScriptSql(scriptName);
+                    command.CommandText = GetDowngradeScriptSql(scriptName);
                     command.CommandType = CommandType.Text;
 
                     return (string)command.ExecuteScalar();
@@ -139,9 +137,9 @@ namespace DbUp.Rollback
 
         protected abstract string DeleteScriptFromJournalSql(string scriptName);
 
-        public virtual void RevertScript(string scriptName, string rollbackScript)
+        public virtual void RevertScript(string scriptName, string downgradeScript)
         {
-            if (string.IsNullOrWhiteSpace(rollbackScript))
+            if (string.IsNullOrWhiteSpace(downgradeScript))
             {
                 Log().WriteWarning("Script '{0}' does not have a revert script.", scriptName);
                 return;
@@ -155,7 +153,7 @@ namespace DbUp.Rollback
                 {
                     using (var command = dbCommandFactory())
                     {
-                        command.CommandText = rollbackScript;
+                        command.CommandText = downgradeScript;
                         command.CommandType = CommandType.Text;
 
                         command.ExecuteNonQuery();
@@ -173,7 +171,7 @@ namespace DbUp.Rollback
             }
         }
 
-        protected abstract string AddRollbackScriptColumnSql();
+        protected abstract string AddDowngradeScriptColumnSql();
 
         public override void EnsureTableExistsAndIsLatestVersion(Func<IDbCommand> dbCommandFactory)
         {
@@ -187,7 +185,7 @@ namespace DbUp.Rollback
                 {
                     using (var command = dbCommandFactory())
                     {
-                        command.CommandText = AddRollbackScriptColumnSql();
+                        command.CommandText = AddDowngradeScriptColumnSql();
                         command.CommandType = CommandType.Text;
 
                         command.ExecuteNonQuery();
@@ -200,7 +198,7 @@ namespace DbUp.Rollback
         {
             using (var command = dbCommandFactory())
             {
-                command.CommandText = DoesRollbackColumnExistSql();
+                command.CommandText = DoesDowngradeColumnExistSql();
                 command.CommandType = CommandType.Text;
                 var executeScalar = command.ExecuteScalar();
                 if (executeScalar == null)
@@ -213,6 +211,6 @@ namespace DbUp.Rollback
             }
         }
 
-        protected abstract string DoesRollbackColumnExistSql();
+        protected abstract string DoesDowngradeColumnExistSql();
     }
 }
