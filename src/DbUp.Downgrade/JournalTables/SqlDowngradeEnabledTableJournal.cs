@@ -3,8 +3,6 @@ using DbUp.Engine.Output;
 using DbUp.Engine.Transactions;
 using DbUp.SqlServer;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DbUp.Downgrade
 {

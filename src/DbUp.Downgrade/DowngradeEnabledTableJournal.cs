@@ -12,6 +12,7 @@ namespace DbUp.Downgrade
     public abstract class DowngradeEnabledTableJournal : TableJournal
     {
         private readonly List<SqlScript> _downgradeScripts;
+        bool journalIsInLatestVersion;
 
         public DowngradeEnabledTableJournal(
             Func<IConnectionManager> connectionManager,
@@ -23,6 +24,7 @@ namespace DbUp.Downgrade
             : base(connectionManager, logger, sqlObjectParser, schema, table)
         {
             _downgradeScripts = downgradeScriptsProvider.GetScripts(connectionManager()).ToList();
+            journalIsInLatestVersion = false;
         }
 
         protected abstract string CreateSchemaTableWithDowngradeSql(string quotedPrimaryKeyName);
@@ -45,30 +47,24 @@ namespace DbUp.Downgrade
         {
             return ConnectionManager().ExecuteCommandsWithManagedConnection(dbCommandFactory =>
             {
-                if (DoesTableExist(dbCommandFactory))
+                EnsureTableExistsAndIsLatestVersion(dbCommandFactory);
+
+                Log().WriteInformation("Fetching list of already executed scripts ordered by Date desc.");
+
+                var scripts = new List<string>();
+
+                using (var command = dbCommandFactory())
                 {
-                    Log().WriteInformation("Fetching list of already executed scripts ordered by Date desc.");
-
-                    var scripts = new List<string>();
-
-                    using (var command = dbCommandFactory())
+                    command.CommandText = GetExecutedScriptsInReverseOrderSql();
+                    command.CommandType = CommandType.Text;
+                    using (var reader = command.ExecuteReader())
                     {
-                        command.CommandText = GetExecutedScriptsInReverseOrderSql();
-                        command.CommandType = CommandType.Text;
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                                scripts.Add((string)reader[0]);
-                        }
+                        while (reader.Read())
+                            scripts.Add((string)reader[0]);
                     }
+                }
 
-                    return scripts.ToArray();
-                }
-                else
-                {
-                    Log().WriteInformation("Journal table does not exist");
-                    return new string[0];
-                }
+                return scripts.ToArray();
             });
         }
 
@@ -130,7 +126,7 @@ namespace DbUp.Downgrade
                     command.CommandText = GetDowngradeScriptSql(scriptName);
                     command.CommandType = CommandType.Text;
 
-                    return (string)command.ExecuteScalar();
+                    return command.ExecuteScalar().ToString();
                 }
             });
         }
@@ -175,6 +171,11 @@ namespace DbUp.Downgrade
 
         public override void EnsureTableExistsAndIsLatestVersion(Func<IDbCommand> dbCommandFactory)
         {
+            if (journalIsInLatestVersion)
+            {
+                return;
+            }
+
             if (!DoesTableExist(dbCommandFactory))
             {
                 base.EnsureTableExistsAndIsLatestVersion(dbCommandFactory);
@@ -192,6 +193,8 @@ namespace DbUp.Downgrade
                     }
                 }
             }
+
+            journalIsInLatestVersion = true;
         }
 
         protected virtual bool IsTableInLatestVersion(Func<IDbCommand> dbCommandFactory)

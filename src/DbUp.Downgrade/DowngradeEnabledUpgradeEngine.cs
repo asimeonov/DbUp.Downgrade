@@ -24,6 +24,11 @@ namespace DbUp.Downgrade
 
             builder.Configure(c =>
             {
+                if (!(c.Journal is DowngradeEnabledTableJournal))
+                {
+                    throw new NotSupportedException("Can't build 'DowngradeEnabledUpgradeEngine', journal table not inherits 'DowngradeEnabledTableJournal'");
+                }
+
                 _journal = c.Journal as DowngradeEnabledTableJournal;
                 _scriptProviders = c.ScriptProviders;
                 _connectionManager = c.ConnectionManager;

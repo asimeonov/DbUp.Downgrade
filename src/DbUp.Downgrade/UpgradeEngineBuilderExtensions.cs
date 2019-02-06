@@ -1,6 +1,6 @@
 ﻿using DbUp.Builder;
+using DbUp.Engine;
 using DbUp.ScriptProviders;
-using System;
 using System.Reflection;
 
 namespace DbUp.Downgrade
@@ -17,6 +17,15 @@ namespace DbUp.Downgrade
             builder.Configure(c => c.Journal = new SqlDowngradeEnabledTableJournal(() => c.ConnectionManager, () => c.Log, schema, table,
                 new EmbeddedScriptProvider(assembly, downgradeScriptsSettings.DowngradeScriptsFilter)));
 
+            return builder;
+        }
+
+        public static UpgradeEngineBuilder WithDowngradeScriptProvider(this UpgradeEngineBuilder builder, 
+            IScriptProvider scriptProvider, 
+            string schema = null,
+            string table = "SchemaVersions")
+        {
+            builder.Configure(c => c.Journal = new SqlDowngradeEnabledTableJournal(() => c.ConnectionManager, () => c.Log, schema, table, scriptProvider));
             return builder;
         }
 
