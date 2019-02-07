@@ -7,6 +7,8 @@
     <RepositoryUrl>https://github.com/asimeonov/DbUp.Downgrade</RepositoryUrl>
     <RepositoryType />
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Authors>Atanas Simeonov</Authors>
+    <Company>Atanas Simeonov</Company>
   </PropertyGroup>
 
   <ItemGroup>
