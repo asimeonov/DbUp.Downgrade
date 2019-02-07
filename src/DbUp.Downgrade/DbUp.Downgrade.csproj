@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Extends DbUp pipeline adding capability to store revert scripts in Schema Version table. In case that older version is found newer versions are rolled back.</Description>
     <PackageProjectUrl>https://github.com/asimeonov/DbUp.Downgrade</PackageProjectUrl>
     <RepositoryUrl>https://github.com/asimeonov/DbUp.Downgrade</RepositoryUrl>
