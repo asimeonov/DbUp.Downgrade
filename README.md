@@ -26,15 +26,13 @@ var upgradeEngineBuilder = DeployChanges.To
 
 If you are using scripts embedded in the executing assembly you can directly use ```WithScriptsAndDowngradeScriptsEmbeddedInAssembly``` method. It will require an instance of ```DowngradeScriptsSettings``` class.
 The settings has two static methods for fast and easy setup ```FromSuffix(string suffixName)``` and ```FromFolder(string folderName)```. By using them the code will rely that you have either downgrade scripts in a folder named same as the upgrade scripts:
-    .
-    ├── ...
-    ├── Scripts                             # The scripts that will perform the upgrade of the Database
-    │   ├── Script0001 - Create tables.sql          
-    │   ├── Script0002 - Default feed.sql
-    │   └── Script0003 - Settings.sql
-    ├── DowngradeScripts                    # Scripts that will revert the changes made from the Upgrade Scripts
-    │   ├── Script0003 - Settings.sql       # NOTE: Must be with same name as the upgrade script
-    └── ...
+
+* Scripts                             # The scripts that will perform the upgrade of the Database
+    * Script0001 - Create tables.sql          
+    * Script0002 - Default feed.sql
+    * Script0003 - Settings.sql
+* DowngradeScripts                    # Scripts that will revert the changes made from the Upgrade Scripts
+    * Script0003 - Settings.sql       # NOTE: Must be with same name as the upgrade script
 
 After the folder structure and naming convention is placed correctly you can build the ```DowngradeEnabledUpgradeEngine```.
 ```csharp
