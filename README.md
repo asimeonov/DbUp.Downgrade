@@ -34,6 +34,13 @@ The settings has two static methods for fast and easy setup ```FromSuffix(string
 * DowngradeScripts                    # Scripts that will revert the changes made from the Upgrade Scripts
     * Script0003 - Settings.sql       # NOTE: Must be with same name as the upgrade script
 
+Or with a suffix:
+* Scripts                             # The scripts that will perform the upgrade of the Database
+    * Script0001 - Create tables.sql          
+    * Script0002 - Default feed.sql
+    * Script0003 - Settings.sql
+    * Script0003 - Settings_downgrade.sql  
+
 After the folder structure and naming convention is placed correctly you can build the ```DowngradeEnabledUpgradeEngine```.
 ```csharp
 var upgrader = upgradeEngineBuilder.BuildWithDowngrade(true);
