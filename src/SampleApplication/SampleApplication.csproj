@@ -19,13 +19,14 @@
     <EmbeddedResource Include="Scripts\Script0001 - Create tables.sql" />
     <EmbeddedResource Include="Scripts\Script0002 - Default feed.sql" />
     <EmbeddedResource Include="Scripts\Script0003 - Settings.sql" />
-    <EmbeddedResource Include="Scripts\Script0004 - Redirects_downgrade.sql" />
     <EmbeddedResource Include="Scripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="Scripts\Script0004 - Redirects_downgrade.sql" />
     <EmbeddedResource Include="Scripts\Script0005 - Redirects add time to travel.sql" />
     <EmbeddedResource Include="Scripts\Script0005 - Redirects add time to travel_downgrade.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DbUp.Downgrade.SqlServer\DbUp.Downgrade.SqlServer.csproj" />
     <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
   </ItemGroup>
 
