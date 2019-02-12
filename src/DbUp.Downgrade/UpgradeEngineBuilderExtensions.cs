@@ -14,7 +14,7 @@ namespace DbUp.Downgrade
             Assembly assembly,
             DowngradeScriptsSettings downgradeScriptsSettings,
             string schema = null,
-            string table = "SchemaVersions") where TDowngradeEnabledTableJournal : DowngradeEnabledTableJournal
+            string table = null) where TDowngradeEnabledTableJournal : DowngradeEnabledTableJournal
         {
             builder.WithScriptsEmbeddedInAssembly(assembly, downgradeScriptsSettings.ScriptsFilter);
             builder.WithDowngradeTableProvider<TDowngradeEnabledTableJournal>(
@@ -28,7 +28,7 @@ namespace DbUp.Downgrade
         public static UpgradeEngineBuilder WithDowngradeTableProvider<TDowngradeEnabledTableJournal>(this UpgradeEngineBuilder builder,
             IScriptProvider downgradeScriptProvider,
             string schema = null,
-            string table = "SchemaVersions") where TDowngradeEnabledTableJournal : DowngradeEnabledTableJournal
+            string table = null) where TDowngradeEnabledTableJournal : DowngradeEnabledTableJournal
         {
             builder.Configure(c =>
             {

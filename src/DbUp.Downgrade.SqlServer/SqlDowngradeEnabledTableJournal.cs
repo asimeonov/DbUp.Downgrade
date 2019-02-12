@@ -8,13 +8,15 @@ namespace DbUp.Downgrade
 {
     public class SqlDowngradeEnabledTableJournal : DowngradeEnabledTableJournal
     {
+        public const string DefaultTable = "SchemaVersions";
+
         public SqlDowngradeEnabledTableJournal(
             Func<IConnectionManager> connectionManager,
             Func<IUpgradeLog> logger,
             string schema,
             string table,
             IScriptProvider downgradeScriptsProvider)
-            : base(connectionManager, logger, new SqlServerObjectParser(), schema, table, downgradeScriptsProvider)
+            : base(connectionManager, logger, new SqlServerObjectParser(), schema, table ?? DefaultTable, downgradeScriptsProvider)
         {
 
         }
