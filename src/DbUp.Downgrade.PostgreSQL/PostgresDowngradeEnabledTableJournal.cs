@@ -8,7 +8,6 @@ namespace DbUp.Downgrade
 {
     public class PostgresDowngradeEnabledTableJournal : DowngradeEnabledTableJournal
     {
-        public const string DefaultSchema = null;
         public const string DefaultTable = "schemaversions";
 
         public PostgresDowngradeEnabledTableJournal(
@@ -17,7 +16,7 @@ namespace DbUp.Downgrade
             string schema,
             string table,
             IScriptProvider downgradeScriptsProvider)
-            : base(connectionManager, logger, new PostgresqlObjectParser(), schema ?? DefaultSchema, table ?? DefaultTable, downgradeScriptsProvider)
+            : base(connectionManager, logger, new PostgresqlObjectParser(), schema, table ?? DefaultTable, downgradeScriptsProvider)
         {
 
         }
