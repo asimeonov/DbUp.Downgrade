@@ -1,12 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>DbUp.Downgrade default SchemaVersion implementation for PostgreSQL.</Description>
-    <Version>2.0.0</Version>
+    <Description>Extends DbUp pipeline adding capability to store revert scripts in Schema Version table. In case that older version is found newer versions are rolled back. SchemaVersion implementation for PostgreSQL.</Description>
+    <Version>2.0.0-pre</Version>
     <Authors>Atanas Simeonov</Authors>
     <PackageProjectUrl>https://github.com/asimeonov/DbUp.Downgrade</PackageProjectUrl>
     <RepositoryUrl>https://github.com/asimeonov/DbUp.Downgrade</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
+    <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj">
+      <PrivateAssets>All</PrivateAssets>
+    </ProjectReference>
   </ItemGroup>
-
+  <ItemGroup>
+    <_PackageFiles Include="$(OutputPath)\DbUp.Downgrade.dll">
+      <BuildAction>None</BuildAction>
+      <PackagePath>lib\$(TargetFramework)\</PackagePath>
+    </_PackageFiles>
+  </ItemGroup>
 </Project>
