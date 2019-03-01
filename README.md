@@ -7,7 +7,7 @@ The library plugs into [DbUp pipeline](https://github.com/DbUp/DbUp/blob/master/
 All existing DbUp projects can integrate the library. It will automatically make the required schema changes in [DbUp Journal table](https://github.com/DbUp/DbUp/blob/master/docs/more-info/journaling.md) in order to operate correctly. All newly added upgrade scripts can have a corresponding downgrade script.
 
 ## Usage
-1. Install ```Install-Package DbUp.Downgrade```
+1. Install ```Install-Package DbUp.Downgrade``` for SQL Server or ```Install-Package DbUp.Downgrade.PostgreSQL``` for PostgreSQL
 
 Aftre successful install of the package you can start using it by:
 
@@ -16,11 +16,18 @@ Include the namespace
 using DbUp.Downgrade;
 ```
 
-This namespace will add new extensions to DbUp configuration builder:
+This namespace will add new extensions to DbUp configuration builder for SQL Server:
 ```csharp
 var upgradeEngineBuilder = DeployChanges.To
                 .SqlDatabase(connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), DowngradeScriptsSettings.FromSuffix())
+                .LogToConsole();
+```
+And for PosgreSQL:
+```csharp
+var upgradeEngineBuilder = DeployChanges.To
+                .PostgresqlDatabase(connectionString)
+                .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<PostgresDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
                 .LogToConsole();
 ```
 
