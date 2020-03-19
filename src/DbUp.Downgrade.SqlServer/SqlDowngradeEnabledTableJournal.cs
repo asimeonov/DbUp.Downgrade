@@ -1,4 +1,5 @@
-﻿using DbUp.Engine;
+﻿using DbUp.Downgrade.Helpers;
+using DbUp.Engine;
 using DbUp.Engine.Output;
 using DbUp.Engine.Transactions;
 using DbUp.SqlServer;
@@ -15,8 +16,9 @@ namespace DbUp.Downgrade
             Func<IUpgradeLog> logger,
             string schema,
             string table,
-            IScriptProvider downgradeScriptsProvider)
-            : base(connectionManager, logger, new SqlServerObjectParser(), schema, table ?? DefaultTable, downgradeScriptsProvider)
+            IScriptProvider downgradeScriptsProvider,
+            IDowngradeScriptFinder downgradeScriptFinder)
+            : base(connectionManager, logger, new SqlServerObjectParser(), schema, table ?? DefaultTable, downgradeScriptsProvider, downgradeScriptFinder)
         {
 
         }
