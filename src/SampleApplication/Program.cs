@@ -22,7 +22,7 @@ namespace SampleApplication
 
             EnsureDatabase.For.SqlDatabase(connectionString);
 
-            DowngradeScriptsSettings settings = DowngradeScriptsSettings.FromFolder();
+            DowngradeScriptsSettings settings = DowngradeScriptsSettings.FromSuffix();
 
             var upgradeEngineBuilder = DeployChanges.To
                 .SqlDatabase(connectionString)

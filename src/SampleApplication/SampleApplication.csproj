@@ -6,23 +6,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DowngradeScripts\Script0004 - Redirects.sql" />
-    <None Remove="DowngradeScripts\Script0005 - Redirects add time to travel.sql" />
     <None Remove="Scripts\Script0001 - Create tables.sql" />
     <None Remove="Scripts\Script0002 - Default feed.sql" />
     <None Remove="Scripts\Script0003 - Settings.sql" />
     <None Remove="Scripts\Script0004 - Redirects.sql" />
+    <None Remove="Scripts\Script0004 - Redirects_downgrade.sql" />
     <None Remove="Scripts\Script0005 - Redirects add time to travel.sql" />
+    <None Remove="Scripts\Script0005 - Redirects add time to travel_downgrade.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="DowngradeScripts\Script0004 - Redirects.sql" />
-    <EmbeddedResource Include="DowngradeScripts\Script0005 - Redirects add time to travel.sql" />
     <EmbeddedResource Include="Scripts\Script0001 - Create tables.sql" />
     <EmbeddedResource Include="Scripts\Script0002 - Default feed.sql" />
     <EmbeddedResource Include="Scripts\Script0003 - Settings.sql" />
     <EmbeddedResource Include="Scripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="Scripts\Script0004 - Redirects_downgrade.sql" />
     <EmbeddedResource Include="Scripts\Script0005 - Redirects add time to travel.sql" />
+    <EmbeddedResource Include="Scripts\Script0005 - Redirects add time to travel_downgrade.sql" />
   </ItemGroup>
 
   <ItemGroup>

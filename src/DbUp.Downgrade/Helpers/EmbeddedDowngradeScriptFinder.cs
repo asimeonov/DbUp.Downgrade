@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -30,12 +31,11 @@ namespace DbUp.Downgrade.Helpers
 
         public SqlScript GetCorrespondingDowngradeScript(SqlScript scriptToExecute, List<SqlScript> downgradeScripts)
         {
-            string executingScriptString = string.Empty;
             switch (_downgradeScriptsSettings.SettingsMode.Key)
             {
                 case DowngradeScriptsSettingsMode.Suffix:
-                    executingScriptString = scriptToExecute.Name.Replace(".sql", string.Empty);
-                    return downgradeScripts.SingleOrDefault(s => s.Name.Contains(executingScriptString));
+                    string executingScriptName = Path.GetFileNameWithoutExtension(scriptToExecute.Name);
+                    return downgradeScripts.SingleOrDefault(s => s.Name.Contains(executingScriptName));
                 case DowngradeScriptsSettingsMode.Folder:
                     foreach (var downgradeScript in downgradeScripts)
                     {
