@@ -5,7 +5,7 @@ using DbUp.Engine;
 namespace DbUp.Downgrade.Helpers
 {
     /// <summary>
-    /// Default matching for scripts. Comparing scriptToExecute.Name to downgradeScript.Name
+    /// Default matching for scripts. Comparing scriptToExecute.Name to downgradeScript.Name.
     /// </summary>
     public class DefaultDowngradeScriptFinder : IDowngradeScriptFinder
     {

@@ -93,10 +93,12 @@ namespace DbUp.Downgrade
 
             if (correspondingDowngradeScript != null)
             {
+                Log().WriteInformation("Script '{0}' has corresponding downgrade script with name '{1}'.", script.Name, correspondingDowngradeScript.Name);
                 downgradeScriptParam.Value = correspondingDowngradeScript.Contents;
             }
             else
             {
+                Log().WriteInformation("Script '{0}' don't have corresponding downgrade script.", script.Name);
                 downgradeScriptParam.Value = DBNull.Value;
             }
 
