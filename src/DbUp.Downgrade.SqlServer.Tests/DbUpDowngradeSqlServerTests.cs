@@ -225,6 +225,60 @@ namespace DbUp.Downgrade.SqlServer.Tests
             }
         }
 
+        [Test]
+        public void ExistingProjects_DowngradeScriptColumnDontExists_AddsDowngradeScriptColumn()
+        {
+            var upgradeEngineBuilder = DeployChanges.To
+                .SqlDatabase(connectionString)
+                .WithScript(new SqlScript("CreatePersonsTable", "CREATE TABLE Persons(PersonID int, LastName varchar(255), FirstName varchar(255));"))
+                .LogToNowhere();
+
+            upgradeEngineBuilder.Build().PerformUpgrade();
+
+            var upgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", @"CREATE TABLE [dbo].[Values](
+                     [Id] [int] NOT NULL,
+                     [Value1] [int] NOT NULL,
+                     [Value2] [int] NULL,
+                     CONSTRAINT [PK_Values] PRIMARY KEY CLUSTERED 
+                    (
+                     [Id] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+                    ) ON [PRIMARY]") });
+
+            var downgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", "DROP TABLE [dbo].[Values]") });
+
+            var downgradeEngineBuilder = DeployChanges.To
+                .SqlDatabase(connectionString)
+                .WithScripts(upgradeScriptProvider)
+                .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
+                .LogToNowhere();
+
+            var result = downgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
+
+            //Assert
+            Assert.AreEqual(true, result.Successful);
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'SchemaVersions' AND COLUMN_NAME = 'DowngradeScript'", connection);
+
+                try
+                {
+                    connection.Open();
+                    var executeScalar = command.ExecuteScalar();
+                    Assert.IsNotNull(executeScalar); // If 1 the DowngradeScript cloumn persists in the DB
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+        }
+
         private Dictionary<string, string> GetExecutedScriptsFromDatabase(string connectionString)
         {
             Dictionary<string, string> executedScriptsAndDowngradeScripts = new Dictionary<string, string>();
