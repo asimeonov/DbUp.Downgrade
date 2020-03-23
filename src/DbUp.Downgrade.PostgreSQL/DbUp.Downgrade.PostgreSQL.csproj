@@ -3,11 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Extends DbUp pipeline adding capability to store revert scripts in Schema Version table. In case that older version is found newer versions are rolled back. SchemaVersion implementation for PostgreSQL.</Description>
-    <Version>1.1.0</Version>
+    <Version>2.0.0</Version>
     <Authors>Atanas Simeonov</Authors>
     <PackageProjectUrl>https://github.com/asimeonov/DbUp.Downgrade</PackageProjectUrl>
     <RepositoryUrl>https://github.com/asimeonov/DbUp.Downgrade</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

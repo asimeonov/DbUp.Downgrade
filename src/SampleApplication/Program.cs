@@ -1,5 +1,6 @@
 ﻿using DbUp;
 using DbUp.Downgrade;
+using DbUp.Downgrade.Helpers;
 using DbUp.Engine;
 using DbUp.ScriptProviders;
 using System;
@@ -12,7 +13,7 @@ namespace SampleApplication
     {
         static void Main(string[] args)
         {
-            string instanceName = @"(local)\SqlExpress";
+            string instanceName = @".\SqlExpress";
             // Uncomment the following line to run against sql local db instance.
 
             var connectionString = $"Data Source={instanceName};Initial Catalog=SampleApplication;Integrated Security=True;Pooling=False";
@@ -28,7 +29,7 @@ namespace SampleApplication
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
                 .LogToConsole();
 
-            //var upgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("Values Table", @"CREATE TABLE [dbo].[Values](
+            //var upgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", @"CREATE TABLE [dbo].[Values](
             //         [Id] [int] NOT NULL,
             //         [Value1] [int] NOT NULL,
             //         [Value2] [int] NULL,
@@ -38,12 +39,12 @@ namespace SampleApplication
             //        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
             //        ) ON [PRIMARY]") });
 
-            //var downgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("Values Table", "DROP TABLE [dbo].[Values]") });
+            //var downgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", "DROP TABLE [dbo].[Values]") });
 
             //var upgradeEngineBuilder = DeployChanges.To
             //    .SqlDatabase(connectionString)
             //    .WithScripts(upgradeScriptProvider)
-            //    .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider)
+            //    .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
             //    .LogToConsole();
 
             var upgrader = upgradeEngineBuilder.BuildWithDowngrade(true);

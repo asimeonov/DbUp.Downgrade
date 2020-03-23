@@ -1,4 +1,5 @@
-﻿using DbUp.Engine;
+﻿using DbUp.Downgrade.Helpers;
+using DbUp.Engine;
 using DbUp.Engine.Output;
 using DbUp.Engine.Transactions;
 using DbUp.Support;
@@ -13,6 +14,7 @@ namespace DbUp.Downgrade
     {
         private readonly List<SqlScript> _downgradeScripts;
         bool journalIsInLatestVersion;
+        private readonly IDowngradeScriptFinder _downgradeScriptFinder;
 
         public DowngradeEnabledTableJournal(
             Func<IConnectionManager> connectionManager,
@@ -20,11 +22,13 @@ namespace DbUp.Downgrade
             ISqlObjectParser sqlObjectParser,
             string schema,
             string table,
-            IScriptProvider downgradeScriptsProvider)
+            IScriptProvider downgradeScriptsProvider,
+            IDowngradeScriptFinder downgradeScriptFinder)
             : base(connectionManager, logger, sqlObjectParser, schema, table)
         {
             _downgradeScripts = downgradeScriptsProvider.GetScripts(connectionManager()).ToList();
             journalIsInLatestVersion = false;
+            _downgradeScriptFinder = downgradeScriptFinder;
         }
 
         protected abstract string CreateSchemaTableWithDowngradeSql(string quotedPrimaryKeyName);
@@ -85,15 +89,16 @@ namespace DbUp.Downgrade
             var downgradeScriptParam = command.CreateParameter();
             downgradeScriptParam.ParameterName = "downgradeScript";
 
-            string[] executingStringParts = script.Name.Replace(".sql", string.Empty).Split('.');
-            var correspondingDowngradeScript = _downgradeScripts.SingleOrDefault(s => s.Name.Contains(executingStringParts.Last()));
+            var correspondingDowngradeScript = _downgradeScriptFinder.GetCorrespondingDowngradeScript(script, _downgradeScripts);
 
             if (correspondingDowngradeScript != null)
             {
+                Log().WriteInformation("Script '{0}' has corresponding downgrade script with name '{1}'.", script.Name, correspondingDowngradeScript.Name);
                 downgradeScriptParam.Value = correspondingDowngradeScript.Contents;
             }
             else
             {
+                Log().WriteInformation("Script '{0}' don't have corresponding downgrade script.", script.Name);
                 downgradeScriptParam.Value = DBNull.Value;
             }
 
