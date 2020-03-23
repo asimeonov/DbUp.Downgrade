@@ -12,8 +12,8 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. What is the DbUp.Downgrade version that you are using?
-2. What is the [DbUp Script Provider](https://github.com/DbUp/DbUp/blob/master/docs/more-info/script-providers.md) that you are using?
+1. What is the `DbUp.Downgrade` version that you are using?
+2. What is the `DbUp Script Provider` that you are using?
 3. What is the issue that you have?
 
 **Expected behavior**
