@@ -6,10 +6,10 @@
     <PackageProjectUrl>https://github.com/asimeonov/DbUp.Downgrade</PackageProjectUrl>
     <RepositoryUrl>https://github.com/asimeonov/DbUp.Downgrade</RepositoryUrl>
     <RepositoryType />
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.1.0</AssemblyVersion>
     <Authors>Atanas Simeonov</Authors>
     <Company>Atanas Simeonov</Company>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <PackageId>DbUp.Downgrade.Core</PackageId>
     <Product>DbUp.Downgrade.Core</Product>
   </PropertyGroup>
