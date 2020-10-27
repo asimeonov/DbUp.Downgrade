@@ -150,18 +150,24 @@ namespace DbUp.Downgrade
 
             try
             {
-                ConnectionManager().ExecuteCommandsWithManagedConnection(dbCommandFactory =>
+                var connectionManager = ConnectionManager();
+                var scriptStatements = connectionManager.SplitScriptIntoCommands(downgradeScript);
+
+                connectionManager.ExecuteCommandsWithManagedConnection(dbCommandFactory =>
                 {
-                    using (var command = dbCommandFactory())
+                    foreach (var statement in scriptStatements)
                     {
-                        command.CommandText = downgradeScript;
-                        command.CommandType = CommandType.Text;
+                        using (var command = dbCommandFactory())
+                        {
+                            command.CommandText = statement;
+                            command.CommandType = CommandType.Text;
 
-                        command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
 
-                        command.CommandText = DeleteScriptFromJournalSql(scriptName);
+                            command.CommandText = DeleteScriptFromJournalSql(scriptName);
 
-                        command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
+                        }
                     }
                 });
             }
