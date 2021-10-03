@@ -42,6 +42,7 @@ namespace DbUp.Downgrade
         {
             List<SqlScript> downgradeScripts = new List<SqlScript>();
 
+            SqlScript downgradeSqlScript = null;
             try
             {
                 var configurationTransactionMode = _connectionManager.TransactionMode;
@@ -57,8 +58,12 @@ namespace DbUp.Downgrade
                         if (!allScripts.Any(s => s.Name.Equals(executedScript)))
                         {
                             string downgradeScript = _journal.GetDowngradeScript(executedScript);
+                            
+                            downgradeSqlScript = new SqlScript("FailedDowngradeScript", downgradeScript);
 
                             _journal.RevertScript(executedScript, downgradeScript);
+
+                            downgradeScripts.Add(downgradeSqlScript);
                         }
                     }
                 }
@@ -66,10 +71,10 @@ namespace DbUp.Downgrade
             }
             catch (Exception ex)
             {
-                return new DatabaseUpgradeResult(downgradeScripts, false, ex);
+                return new DatabaseUpgradeResult(downgradeScripts, false, ex, downgradeSqlScript);
             }
 
-            return new DatabaseUpgradeResult(downgradeScripts, true, null);
+            return new DatabaseUpgradeResult(downgradeScripts, true, null, null);
         }
 
         public DatabaseUpgradeResult PerformUpgrade()
