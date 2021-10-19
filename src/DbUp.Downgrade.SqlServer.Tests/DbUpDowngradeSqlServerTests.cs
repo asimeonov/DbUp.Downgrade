@@ -158,6 +158,57 @@ namespace DbUp.Downgrade.SqlServer.Tests
         }
 
         [Test]
+        public void WithStaticScriptProvider_SuccessfullyRevertPassedScriptByName()
+        {
+            var upgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", @"CREATE TABLE [dbo].[Values](
+                     [Id] [int] NOT NULL,
+                     [Value1] [int] NOT NULL,
+                     [Value2] [int] NULL,
+                     CONSTRAINT [PK_Values] PRIMARY KEY CLUSTERED 
+                    (
+                     [Id] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+                    ) ON [PRIMARY]") });
+
+            var downgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", "DROP TABLE [dbo].[Values]") });
+
+            var upgradeEngineBuilder = DeployChanges.To
+                .SqlDatabase(connectionString)
+                .WithScripts(upgradeScriptProvider)
+                .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
+                .LogToNowhere();
+
+            var result = upgradeEngineBuilder.BuildWithDowngrade(false).PerformUpgrade();
+
+            //Assert
+            Assert.AreEqual(true, result.Successful);
+
+            result = upgradeEngineBuilder.BuildWithDowngrade(false).PerformDowngrade(new string[] { "NameOfYourScript" });
+
+            Assert.AreEqual(true, result.Successful);
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand("select 1 from INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'Values'", connection);
+
+                try
+                {
+                    connection.Open();
+                    var executeScalar = command.ExecuteScalar();
+                    Assert.IsNull(executeScalar); // If null table no longer exists
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+        }
+
+        [Test]
         public void WithScriptsAndDowngradeScriptsEmbeddedInAssembly_RunsFromSuffix_SuccessfullyRevertIfOlderVersionIsDeployed()
         {
             // Setup
