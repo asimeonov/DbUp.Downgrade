@@ -52,7 +52,7 @@ namespace SampleApplication
             var result = upgrader.PerformUpgrade();
             Display(result);
 
-            result = upgrader.PerformDowngrade(new[] { "SampleApplication.Scripts.Script0005 - Redirects add time to travel.sql" });
+            result = upgrader.PerformDowngradeForScripts(new[] { "SampleApplication.Scripts.Script0005 - Redirects add time to travel.sql" });
             Display(result);
 
             Console.ForegroundColor = ConsoleColor.White;

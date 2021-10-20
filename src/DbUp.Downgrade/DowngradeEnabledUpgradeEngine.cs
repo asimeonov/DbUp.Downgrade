@@ -24,7 +24,8 @@ namespace DbUp.Downgrade
 
             builder.Configure(c =>
             {
-                _journal = c.Journal as DowngradeEnabledTableJournal ?? throw new NotSupportedException("Can't build 'DowngradeEnabledUpgradeEngine', journal table not inherits 'DowngradeEnabledTableJournal'");
+                _journal = c.Journal as DowngradeEnabledTableJournal ?? 
+                    throw new NotSupportedException("Can't build 'DowngradeEnabledUpgradeEngine', journal table not inherits 'DowngradeEnabledTableJournal'");
                 _scriptProviders = c.ScriptProviders;
                 _connectionManager = c.ConnectionManager;
                 _log = c.Log;
@@ -33,7 +34,22 @@ namespace DbUp.Downgrade
             UpgradeEngine = builder.Build();
         }
 
-        public DatabaseUpgradeResult PerformDowngrade(string[] scriptsToBeReverted = null)
+        public DatabaseUpgradeResult PerformDowngrade()
+        {
+            return PerformDowngrade(null);
+        }
+
+        /// <summary>Performs the downgrade for selected list of scripts.</summary>
+        /// <param name="scriptsToBeReverted">List of script names to be reverted.</param>
+        /// <returns>
+        ///   <see cref="DatabaseUpgradeResult"/> 
+        /// </returns>
+        public DatabaseUpgradeResult PerformDowngradeForScripts(string[] scriptsToBeReverted)
+        {
+            return PerformDowngrade(scriptsToBeReverted);
+        }
+
+        private DatabaseUpgradeResult PerformDowngrade(string[] scriptsToBeReverted)
         {
             List<SqlScript> downgradeScripts = new List<SqlScript>();
 

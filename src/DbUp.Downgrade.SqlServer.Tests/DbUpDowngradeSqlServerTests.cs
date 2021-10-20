@@ -183,7 +183,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             //Assert
             Assert.AreEqual(true, result.Successful);
 
-            result = upgradeEngineBuilder.BuildWithDowngrade(false).PerformDowngrade(new string[] { "NameOfYourScript" });
+            result = upgradeEngineBuilder.BuildWithDowngrade(false).PerformDowngradeForScripts(new string[] { "NameOfYourScript" });
 
             Assert.AreEqual(true, result.Successful);
 
