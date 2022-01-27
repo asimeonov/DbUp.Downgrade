@@ -10,7 +10,7 @@ namespace DbUp.Downgrade
 {
     public class DowngradeEnabledUpgradeEngine
     {
-        public UpgradeEngine UpgradeEngine { get; private set; }
+        public UpgradeEngine UpgradeEngine { get; }
 
         private DowngradeEnabledTableJournal _journal;
         private List<IScriptProvider> _scriptProviders;
@@ -24,12 +24,8 @@ namespace DbUp.Downgrade
 
             builder.Configure(c =>
             {
-                if (!(c.Journal is DowngradeEnabledTableJournal))
-                {
+                _journal = c.Journal as DowngradeEnabledTableJournal ?? 
                     throw new NotSupportedException("Can't build 'DowngradeEnabledUpgradeEngine', journal table not inherits 'DowngradeEnabledTableJournal'");
-                }
-
-                _journal = c.Journal as DowngradeEnabledTableJournal;
                 _scriptProviders = c.ScriptProviders;
                 _connectionManager = c.ConnectionManager;
                 _log = c.Log;
@@ -40,6 +36,21 @@ namespace DbUp.Downgrade
 
         public DatabaseUpgradeResult PerformDowngrade()
         {
+            return PerformDowngrade(null);
+        }
+
+        /// <summary>Performs the downgrade for selected list of scripts.</summary>
+        /// <param name="scriptsToBeReverted">List of script names to be reverted.</param>
+        /// <returns>
+        ///   <see cref="DatabaseUpgradeResult"/> 
+        /// </returns>
+        public DatabaseUpgradeResult PerformDowngradeForScripts(string[] scriptsToBeReverted)
+        {
+            return PerformDowngrade(scriptsToBeReverted);
+        }
+
+        private DatabaseUpgradeResult PerformDowngrade(string[] scriptsToBeReverted)
+        {
             List<SqlScript> downgradeScripts = new List<SqlScript>();
 
             SqlScript downgradeSqlScript = null;
@@ -47,22 +58,21 @@ namespace DbUp.Downgrade
             {
                 var configurationTransactionMode = _connectionManager.TransactionMode;
                 _connectionManager.TransactionMode = TransactionMode.SingleTransaction;
-                using (var opration = _connectionManager.OperationStarting(_log, new List<SqlScript>()))
+                using (var operation = _connectionManager.OperationStarting(_log, new List<SqlScript>()))
                 {
                     var allScripts = _scriptProviders.SelectMany(scriptProvider => scriptProvider.GetScripts(_connectionManager));
-
                     var executedScripts = _journal.GetExecutedScriptsInReverseOrder();
 
                     foreach (var executedScript in executedScripts)
                     {
-                        if (!allScripts.Any(s => s.Name.Equals(executedScript)))
+                        if (!allScripts.Any(s => s.Name.Equals(executedScript)) || (scriptsToBeReverted?.Contains(executedScript) ?? false))
                         {
                             string downgradeScript = _journal.GetDowngradeScript(executedScript);
                             
-                            downgradeSqlScript = new SqlScript("FailedDowngradeScript", downgradeScript);
-
+                            downgradeSqlScript = new SqlScript(executedScript, downgradeScript);
+                            
                             _journal.RevertScript(executedScript, downgradeScript);
-
+                            
                             downgradeScripts.Add(downgradeSqlScript);
                         }
                     }

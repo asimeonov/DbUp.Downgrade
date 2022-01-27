@@ -9,9 +9,9 @@ using System.Reflection;
 
 namespace SampleApplication
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             string instanceName = @".\SqlExpress";
             // Uncomment the following line to run against sql local db instance.
@@ -50,8 +50,19 @@ namespace SampleApplication
             var upgrader = upgradeEngineBuilder.BuildWithDowngrade(true);
 
             var result = upgrader.PerformUpgrade();
+            Display(result);
 
-            // Display the result
+            result = upgrader.PerformDowngradeForScripts(new[] { "SampleApplication.Scripts.Script0005 - Redirects add time to travel.sql" });
+            Display(result);
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey();
+        }
+
+        private static void Display(DatabaseUpgradeResult result)
+        {
             if (result.Successful)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -63,11 +74,6 @@ namespace SampleApplication
                 Console.WriteLine(result.Error);
                 Console.WriteLine("Failed!");
             }
-
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine();
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey();
         }
     }
 }
