@@ -6,20 +6,21 @@ using System.Reflection;
 using DbUp.Downgrade.Helpers;
 using DbUp.Engine;
 using DbUp.ScriptProviders;
-using Xunit;
+using NUnit.Framework;
 
 namespace DbUp.Downgrade.SqlServer.Tests
 {
-    public class DbUpDowngradeSqlServerTests : IDisposable
+    public class DbUpDowngradeSqlServerTests
     {
         string connectionString = $"Data Source=.\\SqlExpress;Initial Catalog=DbUpDowngradeTests;Integrated Security=True;Pooling=False";
 
-        public DbUpDowngradeSqlServerTests()
+        [SetUp]
+        public void Setup()
         {
             EnsureDatabase.For.SqlDatabase(connectionString);
         }
 
-        [Fact]
+        [Test]
         public void WithScriptsAndDowngradeScriptsEmbeddedInAssembly_RunsFromSuffix_SuccessfullyStoresDowngradeScripts()
         {
             // Setup
@@ -40,21 +41,21 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
             //Assert
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
             var upgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.ScriptsFilter).GetScripts(null);
             var downgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.DowngradeScriptsFilter).GetScripts(null);
 
-            Assert.Equal(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
+            Assert.AreEqual(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
 
             foreach (var storedDowngradeScript in executedScriptsAndDowngradeScripts.Values.Where(v => !string.IsNullOrEmpty(v)))
             {
-                Assert.Contains(downgradeScripts, script => script.Contents.Equals(storedDowngradeScript));
+                Assert.IsTrue(downgradeScripts.Any(script => script.Contents.Equals(storedDowngradeScript)));
             }
         }
 
-        [Fact]
+        [Test]
         public void WithScriptsAndDowngradeScriptsEmbeddedInAssembly_RunsFromFolder_SuccessfullyStoresDowngradeScripts()
         {
             // Setup
@@ -75,21 +76,21 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
             //Assert
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
             var upgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.ScriptsFilter).GetScripts(null);
             var downgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.DowngradeScriptsFilter).GetScripts(null);
 
-            Assert.Equal(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
+            Assert.AreEqual(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
 
             foreach (var storedDowngradeScript in executedScriptsAndDowngradeScripts.Values.Where(v => !string.IsNullOrEmpty(v)))
             {
-                Assert.Contains(downgradeScripts, script => script.Contents.Equals(storedDowngradeScript));
+                Assert.IsTrue(downgradeScripts.Any(script => script.Contents.Equals(storedDowngradeScript)));
             }
         }
 
-        [Fact]
+        [Test]
         public void FileSystemScriptProvider_SuccessfullyStoresDowngradeScripts()
         {
             var upgradeScriptProvider = new FileSystemScriptProvider("FileSystemScripts\\Up", new FileSystemScriptOptions() { IncludeSubDirectories = true });
@@ -104,21 +105,21 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
             //Assert
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
             var upgradeScripts = upgradeScriptProvider.GetScripts(null);
             var downgradeScripts = downgradeScriptProvider.GetScripts(null);
 
-            Assert.Equal(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
+            Assert.AreEqual(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
 
             foreach (var storedDowngradeScript in executedScriptsAndDowngradeScripts.Values.Where(v => !string.IsNullOrEmpty(v)))
             {
-                Assert.Contains(downgradeScripts, script => script.Contents.Equals(storedDowngradeScript));
+                Assert.IsTrue(downgradeScripts.Any(script => script.Contents.Equals(storedDowngradeScript)));
             }
         }
 
-        [Fact]
+        [Test]
         public void StaticScriptProvider_SuccessfullyStoresDowngradeScripts()
         {
             var upgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", @"CREATE TABLE [dbo].[Values](
@@ -142,21 +143,21 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
             //Assert
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
             var upgradeScripts = upgradeScriptProvider.GetScripts(null);
             var downgradeScripts = downgradeScriptProvider.GetScripts(null);
 
-            Assert.Equal(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
+            Assert.AreEqual(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
 
             foreach (var storedDowngradeScript in executedScriptsAndDowngradeScripts.Values.Where(v => !string.IsNullOrEmpty(v)))
             {
-                Assert.Contains(downgradeScripts, script => script.Contents.Equals(storedDowngradeScript));
+                Assert.IsTrue(downgradeScripts.Any(script => script.Contents.Equals(storedDowngradeScript)));
             }
         }
 
-        [Fact]
+        [Test]
         public void WithStaticScriptProvider_SuccessfullyRevertPassedScriptByName()
         {
             var upgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", @"CREATE TABLE [dbo].[Values](
@@ -180,11 +181,11 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var result = upgradeEngineBuilder.BuildWithDowngrade(false).PerformUpgrade();
 
             //Assert
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             result = upgradeEngineBuilder.BuildWithDowngrade(false).PerformDowngradeForScripts(new string[] { "NameOfYourScript" });
 
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -194,7 +195,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 {
                     connection.Open();
                     var executeScalar = command.ExecuteScalar();
-                    Assert.Null(executeScalar); // If null table no longer exists
+                    Assert.IsNull(executeScalar); // If null table no longer exists
                 }
                 catch
                 {
@@ -207,7 +208,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public void WithScriptsAndDowngradeScriptsEmbeddedInAssembly_RunsFromSuffix_SuccessfullyRevertIfOlderVersionIsDeployed()
         {
             // Setup
@@ -228,7 +229,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
             //Assert
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             // Perform revert of latest script
             scriptsFilter = s => s.EndsWith(".sql", StringComparison.OrdinalIgnoreCase) && !s.EndsWith($"{suffix}.sql", StringComparison.OrdinalIgnoreCase) 
@@ -247,12 +248,12 @@ namespace DbUp.Downgrade.SqlServer.Tests
             result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
             //Assert
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
             var upgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.ScriptsFilter).GetScripts(null);
 
-            Assert.Equal(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
+            Assert.AreEqual(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -262,7 +263,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 {
                     connection.Open();
                     var executeScalar = command.ExecuteScalar();
-                    Assert.Null(executeScalar); // If null table no longer exists
+                    Assert.IsNull(executeScalar); // If null table no longer exists
                 }
                 catch
                 {
@@ -275,7 +276,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public void ExistingProjects_DowngradeScriptColumnDontExists_AddsDowngradeScriptColumn()
         {
             var upgradeEngineBuilder = DeployChanges.To
@@ -306,7 +307,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var result = downgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
             //Assert
-            Assert.True(result.Successful);
+            Assert.AreEqual(true, result.Successful);
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -316,7 +317,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 {
                     connection.Open();
                     var executeScalar = command.ExecuteScalar();
-                    Assert.NotNull(executeScalar); // If 1 the DowngradeScript cloumn persists in the DB
+                    Assert.IsNotNull(executeScalar); // If 1 the DowngradeScript cloumn persists in the DB
                 }
                 catch
                 {
@@ -362,7 +363,8 @@ namespace DbUp.Downgrade.SqlServer.Tests
             return executedScriptsAndDowngradeScripts;
         }
 
-        public void Dispose()
+        [TearDown]
+        public void TearDown()
         {
             DropDatabase.For.SqlDatabase(connectionString);
         }

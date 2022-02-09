@@ -1,12 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="FileSystemScripts\Down\001\Script0004 - Redirects.sql" />
+    <None Remove="FileSystemScripts\Down\002\Script0004 - Redirects.sql" />
+    <None Remove="FileSystemScripts\Up\001\Script0001 - Create tables.sql" />
+    <None Remove="FileSystemScripts\Up\001\Script0002 - Default feed.sql" />
+    <None Remove="FileSystemScripts\Up\001\Script0003 - Settings.sql" />
+    <None Remove="FileSystemScripts\Up\001\Script0004 - Redirects.sql" />
+    <None Remove="FileSystemScripts\Up\002\Script0004 - Redirects.sql" />
     <None Remove="FolderUpAndDownScrips\DowngradeScripts\Script0004 - Redirects.sql" />
     <None Remove="FolderUpAndDownScrips\DowngradeScripts\Script0005 - Redirects add time to travel.sql" />
     <None Remove="FolderUpAndDownScrips\Scripts\Script0001 - Create tables.sql" />
@@ -22,74 +30,58 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0001 - Create tables.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0002 - Default feed.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0003 - Settings.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0004 - Redirects.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0005 - Redirects add time to travel.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0001 - Create tables.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0002 - Default feed.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0003 - Settings.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0004 - Redirects.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <Content Include="FileSystemScripts\Down\001\Script0004 - Redirects.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Down\002\Script0004 - Redirects.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\001\Script0001 - Create tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\001\Script0002 - Default feed.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\001\Script0003 - Settings.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\001\Script0004 - Redirects.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\002\Script0004 - Redirects.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="FolderUpAndDownScrips\DowngradeScripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\DowngradeScripts\Script0005 - Redirects add time to travel.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0001 - Create tables.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0002 - Default feed.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0003 - Settings.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0005 - Redirects add time to travel.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0001 - Create tables.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0002 - Default feed.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0003 - Settings.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0004 - Redirects.sql" />
     <EmbeddedResource Include="SuffixUpAndDownScripts\Script0004 - Redirects_downgrade.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="nunit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+    <PackageReference Include="dbup-sqlserver" Version="4.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="3.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DbUp.Downgrade.SqlServer\DbUp.Downgrade.SqlServer.csproj" />
     <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="FolderUpAndDownScrips\DowngradeScripts\Script0004 - Redirects.sql" />
-    <EmbeddedResource Include="FolderUpAndDownScrips\DowngradeScripts\Script0005 - Redirects add time to travel.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="FileSystemScripts\Down\001\Script0004 - Redirects.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileSystemScripts\Down\002\Script0004 - Redirects.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileSystemScripts\Up\001\Script0001 - Create tables.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileSystemScripts\Up\001\Script0002 - Default feed.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileSystemScripts\Up\001\Script0003 - Settings.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileSystemScripts\Up\001\Script0004 - Redirects.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileSystemScripts\Up\002\Script0004 - Redirects.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
