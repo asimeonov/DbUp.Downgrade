@@ -12,7 +12,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
 {
     public class DbUpDowngradeSqlServerTests : IDisposable
     {
-        string connectionString = $"Data Source=.\\SqlExpress;Initial Catalog=DbUpDowngradeTests;Integrated Security=True;Pooling=False";
+        string connectionString = $"Data Source=.;Initial Catalog=DbUpDowngradeTests;Integrated Security=True;Pooling=False";
 
         public DbUpDowngradeSqlServerTests()
         {

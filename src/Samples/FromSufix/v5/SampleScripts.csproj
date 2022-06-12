@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +11,9 @@
     <None Remove="Scripts\Script0002 - Default feed.sql" />
     <None Remove="Scripts\Script0003 - Settings.sql" />
     <None Remove="Scripts\Script0004 - Redirects.sql" />
+    <None Remove="Scripts\Script0004 - Redirects_downgrade.sql" />
     <None Remove="Scripts\Script0005 - Redirects add time to travel.sql" />
+    <None Remove="Scripts\Script0005 - Redirects add time to travel_downgrade.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,12 +21,14 @@
     <EmbeddedResource Include="Scripts\Script0002 - Default feed.sql" />
     <EmbeddedResource Include="Scripts\Script0003 - Settings.sql" />
     <EmbeddedResource Include="Scripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="Scripts\Script0004 - Redirects_downgrade.sql" />
     <EmbeddedResource Include="Scripts\Script0005 - Redirects add time to travel.sql" />
+    <EmbeddedResource Include="Scripts\Script0005 - Redirects add time to travel_downgrade.sql" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DbUp.Downgrade.SqlServer\DbUp.Downgrade.SqlServer.csproj" />
-    <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\DbUp.Downgrade.SqlServer\DbUp.Downgrade.SqlServer.csproj" />
+		<ProjectReference Include="..\..\..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
+	</ItemGroup>
+	
 </Project>
