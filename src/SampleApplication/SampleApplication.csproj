@@ -26,4 +26,8 @@
     <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="&quot;$(DevEnvDir)devenv&quot; &quot;$(SolutionDir)DbUp.Rollback.sln&quot; /Build $(configuration) /project &quot;$(SolutionDir)Samples\FromFolder\v4\SampleScripts.csproj&quot;&#xD;&#xA;&quot;$(DevEnvDir)devenv&quot; &quot;$(SolutionDir)DbUp.Rollback.sln&quot; /Build $(configuration) /project &quot;$(SolutionDir)Samples\FromFolder\v5\SampleScripts.csproj&quot;&#xD;&#xA;&quot;$(DevEnvDir)devenv&quot; &quot;$(SolutionDir)DbUp.Rollback.sln&quot; /Build $(configuration) /project &quot;$(SolutionDir)Samples\FromSuffix\v4\SampleScripts.csproj&quot;&#xD;&#xA;&quot;$(DevEnvDir)devenv&quot; &quot;$(SolutionDir)DbUp.Rollback.sln&quot; /Build $(configuration) /project &quot;$(SolutionDir)Samples\FromSuffix\v5\SampleScripts.csproj&quot;" />
+  </Target>
+
 </Project>

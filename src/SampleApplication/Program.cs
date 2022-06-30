@@ -12,20 +12,22 @@ namespace SampleApplication
     public static class Program
     {
         const string SampleApplicationAssemblyPath = "SampleApplication\\bin\\Debug\\net6.0\\SampleApplication.dll";
-        const string SampleWithSuffixV4AssemblyPath = "Samples\\FromSufix\\v4\\bin\\Debug\\net6.0\\SampleScripts.dll";
-        const string SampleWithSuffixV5AssemblyPath = "Samples\\FromSufix\\v5\\bin\\Debug\\net6.0\\SampleScripts.dll";
+        const string SampleWithSuffixV4AssemblyPath = "Samples\\FromSuffix\\v4\\bin\\Debug\\net6.0\\SampleScripts.dll";
+        const string SampleWithSuffixV5AssemblyPath = "Samples\\FromSuffix\\v5\\bin\\Debug\\net6.0\\SampleScripts.dll";
         const string SampleWithFolderV4AssemblyPath = "Samples\\FromFolder\\v4\\bin\\Debug\\net6.0\\SampleScripts.dll";
         const string SampleWithFolderV5AssemblyPath = "Samples\\FromFolder\\v5\\bin\\Debug\\net6.0\\SampleScripts.dll";
 
         public static void Main(string[] args)
         {
-            string instanceName = @".";
+            string instanceName = @"."; // SQL server default instance name
+            //string instanceName = @".\sqlexpress"; // SQL express default instance name
+            //string instanceName = @"(LocalDB)\MSSQLLocalDB"; // local db
 
             var connectionString = $"Data Source={instanceName};Initial Catalog=SampleApplication;Integrated Security=True;Pooling=False";
 
-            FromSufixSampleDeplyingTwoVersionsAndRevertingSecondDeployOfTheSameApplication(connectionString);
+            FromSuffixSampleDeployingTwoVersionsAndRevertingSecondDeployOfTheSameApplication(connectionString);
 
-            FromFolderSampleDeplyingTwoVersionsAndRevertingSecondDeployOfTheSameApplication(connectionString);
+            FromFolderSampleDeployingTwoVersionsAndRevertingSecondDeployOfTheSameApplication(connectionString);
 
             ManualRevertOfScriptFromCode(connectionString);
 
@@ -70,7 +72,7 @@ namespace SampleApplication
             Display(result);
         }
 
-        private static void FromFolderSampleDeplyingTwoVersionsAndRevertingSecondDeployOfTheSameApplication(string connectionString)
+        private static void FromFolderSampleDeployingTwoVersionsAndRevertingSecondDeployOfTheSameApplication(string connectionString)
         {
             DropDatabase.For.SqlDatabase(connectionString);
 
@@ -84,7 +86,7 @@ namespace SampleApplication
             UpdateDatabaseFromSampleAssembly(SampleWithFolderV4AssemblyPath, connectionString);
         }
 
-        private static void FromSufixSampleDeplyingTwoVersionsAndRevertingSecondDeployOfTheSameApplication(string connectionString)
+        private static void FromSuffixSampleDeployingTwoVersionsAndRevertingSecondDeployOfTheSameApplication(string connectionString)
         {
             DropDatabase.For.SqlDatabase(connectionString);
 

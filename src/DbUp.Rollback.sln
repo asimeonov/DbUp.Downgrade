@@ -23,9 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v4", "v4", "{93860A97-A44F-
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v5", "v5", "{CB2B450C-2E1E-462A-9656-47FE13BFFE7F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleScripts", "Samples\FromSufix\v4\SampleScripts.csproj", "{B1D7BF18-6600-439A-95F8-FE955F7342CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleScripts", "Samples\FromSuffix\v4\SampleScripts.csproj", "{B1D7BF18-6600-439A-95F8-FE955F7342CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleScripts", "Samples\FromSufix\v5\SampleScripts.csproj", "{2218C5A1-79A6-4DE8-B52C-5E3D8E455C5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleScripts", "Samples\FromSuffix\v5\SampleScripts.csproj", "{2218C5A1-79A6-4DE8-B52C-5E3D8E455C5A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FromFolder", "FromFolder", "{9BCEDF98-F006-4F99-A6BC-31FF43AD31B3}"
 EndProject
