@@ -19,6 +19,11 @@ namespace DbUp.Downgrade
             SettingsMode = settingsMode;
         }
 
+        /// <summary>
+        /// Builds <see cref="DowngradeScriptsSettings"/> from suffix added to downgrade scripts located in the same folder as upgrade scirpts.
+        /// </summary>
+        /// <param name="suffixName">Name of the suffix. Default to: _downgrade</param>
+        /// <returns></returns>
         public static DowngradeScriptsSettings FromSuffix(string suffixName = "_downgrade")
         {
             Func<string, bool> scriptsFilter = s => s.EndsWith(".sql", StringComparison.OrdinalIgnoreCase) && !s.EndsWith($"{suffixName}.sql", StringComparison.OrdinalIgnoreCase);
@@ -27,6 +32,11 @@ namespace DbUp.Downgrade
             return new DowngradeScriptsSettings(scriptsFilter, downgradeScriptsFilter, new KeyValuePair<DowngradeScriptsSettingsMode, string>(DowngradeScriptsSettingsMode.Suffix, suffixName));
         }
 
+        /// <summary>
+        /// Builds <see cref="DowngradeScriptsSettings"/> from Folder contaning downgrade scripts.
+        /// </summary>
+        /// <param name="folderName">Name of the folder.</param>
+        /// <returns></returns>
         public static DowngradeScriptsSettings FromFolder(string folderName = "DowngradeScripts")
         {
             Func<string, bool> scriptsFilter = s => s.EndsWith(".sql", StringComparison.OrdinalIgnoreCase) && !s.Contains($".{folderName}.");
