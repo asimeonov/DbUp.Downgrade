@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using DbUp.Downgrade.Helpers;
@@ -12,7 +12,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
 {
     public class DbUpDowngradeSqlServerTests : IDisposable
     {
-        string connectionString = $"Data Source=.;Initial Catalog=DbUpDowngradeTests;Integrated Security=True;Pooling=False";
+        string connectionString = $"Server=.;Database=DbUpDowngradeTests;Trusted_Connection=true;TrustServerCertificate=True";
 
         public DbUpDowngradeSqlServerTests()
         {
