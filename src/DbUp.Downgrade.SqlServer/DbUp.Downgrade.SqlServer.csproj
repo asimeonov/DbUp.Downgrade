@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>2.3.0</Version>
+    <Version>2.4.0</Version>
     <Authors>Atanas Simeonov</Authors>
     <Company>Atanas Simeonov</Company>
     <Description>Extends DbUp pipeline adding capability to store revert scripts in Schema Version table. In case that older version is found newer versions are rolled back. SchemaVersion implementation for MS SqlServer.</Description>
@@ -11,12 +11,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>DbUp.Downgrade</PackageId>
     <Product>DbUp.Downgrade</Product>
-    <AssemblyVersion>2.3.0.0</AssemblyVersion>
+    <AssemblyVersion>2.4.0.0</AssemblyVersion>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="dbup-sqlserver" Version="5.0.8" />
+    <PackageReference Include="dbup-sqlserver" Version="5.0.37" />
   </ItemGroup>
 
   <ItemGroup>
