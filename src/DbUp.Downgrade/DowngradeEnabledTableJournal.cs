@@ -72,7 +72,7 @@ namespace DbUp.Downgrade
             });
         }
 
-        protected new IDbCommand GetInsertScriptCommand(Func<IDbCommand> dbCommandFactory, SqlScript script)
+        protected override IDbCommand GetInsertScriptCommand(Func<IDbCommand> dbCommandFactory, SqlScript script)
         {
             var command = dbCommandFactory();
 
