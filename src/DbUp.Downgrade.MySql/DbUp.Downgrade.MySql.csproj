@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Extends DbUp pipeline adding capability to store revert scripts in Schema Version table. In case that older version is found newer versions are rolled back. SchemaVersion implementation for MySql.</Description>
+    <Version>2.4.0</Version>
+    <Authors>Atanas Simeonov</Authors>
+    <PackageProjectUrl>https://github.com/claudiunicola/DbUp.Downgrade</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/claudiunicola/DbUp.Downgrade</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>2.4.0.0</AssemblyVersion>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dbup-mysql" Version="5.0.37" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj">
+      <PrivateAssets>All</PrivateAssets>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <_PackageFiles Include="$(OutputPath)\DbUp.Downgrade.dll">
+      <BuildAction>None</BuildAction>
+      <PackagePath>lib\$(TargetFramework)\</PackagePath>
+    </_PackageFiles>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
