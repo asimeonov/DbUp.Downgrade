@@ -148,7 +148,7 @@ namespace DbUp.Downgrade
                 return;
             }
 
-            Log().WriteInformation("Script '{0}' was not recognized in cuurent version and will be reverted.", scriptName);
+            Log().WriteInformation("Script '{0}' was not recognized in current version and will be reverted.", scriptName);
 
             try
             {
