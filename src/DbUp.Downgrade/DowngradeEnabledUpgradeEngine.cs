@@ -61,6 +61,13 @@ namespace DbUp.Downgrade
                 using (var operation = _connectionManager.OperationStarting(_log, new List<SqlScript>()))
                 {
                     var allScripts = _scriptProviders.SelectMany(scriptProvider => scriptProvider.GetScripts(_connectionManager));
+
+                    if (!allScripts.Any())
+                    {
+                        _log.WriteInformation("No migration scripts found - skipping downgrade.");
+                        return new DatabaseUpgradeResult(downgradeScripts, true, null, null);
+                    }
+
                     var executedScripts = _journal.GetExecutedScriptsInReverseOrder();
 
                     foreach (var executedScript in executedScripts)
