@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Extends DbUp pipeline adding capability to store revert scripts in Schema Version table. In case that older version is found newer versions are rolled back. SchemaVersion implementation for MySql.</Description>
     <Version>2.4.0</Version>
-    <Authors>Atanas Simeonov</Authors>
+    <Authors>Claudiu Nicola</Authors>
     <PackageProjectUrl>https://github.com/claudiunicola/DbUp.Downgrade</PackageProjectUrl>
     <RepositoryUrl>https://github.com/claudiunicola/DbUp.Downgrade</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
