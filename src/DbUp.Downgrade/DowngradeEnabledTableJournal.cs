@@ -86,25 +86,27 @@ namespace DbUp.Downgrade
             appliedParam.Value = DateTime.Now;
             command.Parameters.Add(appliedParam);
 
-            var downgradeScriptParam = command.CreateParameter();
-            downgradeScriptParam.ParameterName = "downgradeScript";
-
             var correspondingDowngradeScript = _downgradeScriptFinder.GetCorrespondingDowngradeScript(script, _downgradeScripts);
 
             if (correspondingDowngradeScript != null)
             {
                 Log().WriteInformation("Script '{0}' has corresponding downgrade script with name '{1}'.", script.Name, correspondingDowngradeScript.Name);
+
+                var downgradeScriptParam = command.CreateParameter();
+                downgradeScriptParam.ParameterName = "downgradeScript";
                 downgradeScriptParam.Value = correspondingDowngradeScript.Contents;
+
+                command.Parameters.Add(downgradeScriptParam);
+
+                command.CommandText = GetInsertJournalEntrySql("@scriptName", "@applied", "@downgradeScript");
             }
             else
             {
                 Log().WriteInformation("Script '{0}' don't have corresponding downgrade script.", script.Name);
-                downgradeScriptParam.Value = DBNull.Value;
+
+                command.CommandText = GetInsertJournalEntrySql("@scriptName", "@applied");
             }
 
-            command.Parameters.Add(downgradeScriptParam);
-
-            command.CommandText = GetInsertJournalEntrySql("@scriptName", "@applied", "@downgradeScript");
             command.CommandType = CommandType.Text;
             return command;
         }
@@ -146,7 +148,7 @@ namespace DbUp.Downgrade
                 return;
             }
 
-            Log().WriteInformation("Script '{0}' was not recognized in cuurent version and will be reverted.", scriptName);
+            Log().WriteInformation("Script '{0}' was not recognized in current version and will be reverted.", scriptName);
 
             try
             {
