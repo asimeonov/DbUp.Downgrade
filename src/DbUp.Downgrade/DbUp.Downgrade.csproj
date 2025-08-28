@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="dbup-core" Version="5.0.37" />
+    <PackageReference Include="dbup-core" Version="6.0.4" />
   </ItemGroup>
 
 </Project>
