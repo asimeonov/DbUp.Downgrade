@@ -1,22 +1,23 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using DbUp.Downgrade.Helpers;
 using DbUp.Engine;
 using DbUp.ScriptProviders;
+using Microsoft.Data.SqlClient;
 using Xunit;
 
 namespace DbUp.Downgrade.SqlServer.Tests
 {
-    public class DbUpDowngradeSqlServerTests : IDisposable
+    [Collection("MsSqlServer")]
+    public class DbUpDowngradeSqlServerTests : IClassFixture<SqlServerDatabaseFixture>//IAsyncLifetime
     {
-        string connectionString = $"Server=.;Database=DbUpDowngradeTests;Trusted_Connection=true;TrustServerCertificate=True";
+        public readonly string _connectionString;
 
-        public DbUpDowngradeSqlServerTests()
+        public DbUpDowngradeSqlServerTests(SqlServerDatabaseFixture sqlServerDatabaseFixture)
         {
-            EnsureDatabase.For.SqlDatabase(connectionString);
+            _connectionString = sqlServerDatabaseFixture.ConnectionString;
         }
 
         [Fact]
@@ -32,7 +33,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 new KeyValuePair<DowngradeScriptsSettingsMode, string>(DowngradeScriptsSettingsMode.Suffix, suffix));
 
             var upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
                 .LogToNowhere();
 
@@ -42,7 +43,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             //Assert
             Assert.True(result.Successful);
 
-            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
+            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(_connectionString);
             var upgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.ScriptsFilter).GetScripts(null);
             var downgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.DowngradeScriptsFilter).GetScripts(null);
 
@@ -67,7 +68,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 new KeyValuePair<DowngradeScriptsSettingsMode, string>(DowngradeScriptsSettingsMode.Folder, folderName));
 
             var upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
                 .LogToNowhere();
 
@@ -77,7 +78,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             //Assert
             Assert.True(result.Successful);
 
-            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
+            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(_connectionString);
             var upgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.ScriptsFilter).GetScripts(null);
             var downgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.DowngradeScriptsFilter).GetScripts(null);
 
@@ -96,7 +97,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var downgradeScriptProvider = new FileSystemScriptProvider("FileSystemScripts\\Down", new FileSystemScriptOptions() { IncludeSubDirectories = true });
 
             var upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScripts(upgradeScriptProvider)
                 .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
                 .LogToNowhere();
@@ -106,7 +107,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             //Assert
             Assert.True(result.Successful);
 
-            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
+            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(_connectionString);
             var upgradeScripts = upgradeScriptProvider.GetScripts(null);
             var downgradeScripts = downgradeScriptProvider.GetScripts(null);
 
@@ -134,7 +135,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var downgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", "DROP TABLE [dbo].[Values]") });
 
             var upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScripts(upgradeScriptProvider)
                 .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
                 .LogToNowhere();
@@ -144,7 +145,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             //Assert
             Assert.True(result.Successful);
 
-            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
+            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(_connectionString);
             var upgradeScripts = upgradeScriptProvider.GetScripts(null);
             var downgradeScripts = downgradeScriptProvider.GetScripts(null);
 
@@ -172,7 +173,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var downgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", "DROP TABLE [dbo].[Values]") });
 
             var upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScripts(upgradeScriptProvider)
                 .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
                 .LogToNowhere();
@@ -186,7 +187,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
 
             Assert.True(result.Successful);
 
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = new SqlCommand("select 1 from INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'Values'", connection);
 
@@ -220,7 +221,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 new KeyValuePair<DowngradeScriptsSettingsMode, string>(DowngradeScriptsSettingsMode.Suffix, suffix));
 
             var upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
                 .LogToNowhere();
 
@@ -239,7 +240,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 new KeyValuePair<DowngradeScriptsSettingsMode, string>(DowngradeScriptsSettingsMode.Suffix, suffix));
 
             upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
                 .LogToNowhere();
 
@@ -249,12 +250,12 @@ namespace DbUp.Downgrade.SqlServer.Tests
             //Assert
             Assert.True(result.Successful);
 
-            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(connectionString);
+            Dictionary<string, string> executedScriptsAndDowngradeScripts = GetExecutedScriptsFromDatabase(_connectionString);
             var upgradeScripts = new EmbeddedScriptProvider(Assembly.GetExecutingAssembly(), settings.ScriptsFilter).GetScripts(null);
 
             Assert.Equal(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
 
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = new SqlCommand("select 1 from INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'Redirect'", connection);
 
@@ -279,7 +280,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
         public void ExistingProjects_DowngradeScriptColumnDontExists_AddsDowngradeScriptColumn()
         {
             var upgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScript(new SqlScript("CreatePersonsTable", "CREATE TABLE Persons(PersonID int, LastName varchar(255), FirstName varchar(255));"))
                 .LogToNowhere();
 
@@ -298,7 +299,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var downgradeScriptProvider = new StaticScriptProvider(new List<SqlScript>() { new SqlScript("NameOfYourScript", "DROP TABLE [dbo].[Values]") });
 
             var downgradeEngineBuilder = DeployChanges.To
-                .SqlDatabase(connectionString)
+                .SqlDatabase(_connectionString)
                 .WithScripts(upgradeScriptProvider)
                 .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
                 .LogToNowhere();
@@ -308,7 +309,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             //Assert
             Assert.True(result.Successful);
 
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = new SqlCommand("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'SchemaVersions' AND COLUMN_NAME = 'DowngradeScript'", connection);
 
@@ -360,11 +361,6 @@ namespace DbUp.Downgrade.SqlServer.Tests
             }
 
             return executedScriptsAndDowngradeScripts;
-        }
-
-        public void Dispose()
-        {
-            DropDatabase.For.SqlDatabase(connectionString);
         }
     }
 }

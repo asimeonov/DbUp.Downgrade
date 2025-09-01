@@ -53,7 +53,7 @@ namespace DbUp.Downgrade
             {
                 EnsureTableExistsAndIsLatestVersion(dbCommandFactory);
 
-                Log().WriteInformation("Fetching list of already executed scripts ordered by Date desc.");
+                Log().LogInformation("Fetching list of already executed scripts ordered by Date desc.");
 
                 var scripts = new List<string>();
 
@@ -90,7 +90,7 @@ namespace DbUp.Downgrade
 
             if (correspondingDowngradeScript != null)
             {
-                Log().WriteInformation("Script '{0}' has corresponding downgrade script with name '{1}'.", script.Name, correspondingDowngradeScript.Name);
+                Log().LogInformation("Script '{0}' has corresponding downgrade script with name '{1}'.", script.Name, correspondingDowngradeScript.Name);
 
                 var downgradeScriptParam = command.CreateParameter();
                 downgradeScriptParam.ParameterName = "downgradeScript";
@@ -102,7 +102,7 @@ namespace DbUp.Downgrade
             }
             else
             {
-                Log().WriteInformation("Script '{0}' don't have corresponding downgrade script.", script.Name);
+                Log().LogInformation("Script '{0}' don't have corresponding downgrade script.", script.Name);
 
                 command.CommandText = GetInsertJournalEntrySql("@scriptName", "@applied");
             }
@@ -124,7 +124,7 @@ namespace DbUp.Downgrade
 
         public virtual string GetDowngradeScript(string scriptName)
         {
-            Log().WriteInformation("Newer (unrecognized) script '{0}' found, searching for corresponding revert script.", scriptName);
+            Log().LogInformation("Newer (unrecognized) script '{0}' found, searching for corresponding revert script.", scriptName);
 
             return ConnectionManager().ExecuteCommandsWithManagedConnection(dbCommandFactory =>
             {
@@ -144,11 +144,11 @@ namespace DbUp.Downgrade
         {
             if (string.IsNullOrWhiteSpace(downgradeScript))
             {
-                Log().WriteWarning("Script '{0}' does not have a revert script.", scriptName);
+                Log().LogWarning("Script '{0}' does not have a revert script.", scriptName);
                 return;
             }
 
-            Log().WriteInformation("Script '{0}' was not recognized in current version and will be reverted.", scriptName);
+            Log().LogInformation("Script '{0}' was not recognized in current version and will be reverted.", scriptName);
 
             try
             {
@@ -175,7 +175,7 @@ namespace DbUp.Downgrade
             }
             catch (Exception ex)
             {
-                Log().WriteError("Script '{0}' wasn't reverted, Exception was thrown:\r\n{1}", scriptName, ex.ToString());
+                Log().LogError("Script '{0}' wasn't reverted, Exception was thrown:\r\n{1}", scriptName, ex.ToString());
                 throw;
             }
         }

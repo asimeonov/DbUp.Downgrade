@@ -64,7 +64,7 @@ namespace DbUp.Downgrade
 
                     if (!allScripts.Any())
                     {
-                        _log.WriteInformation("No migration scripts found - skipping downgrade.");
+                        _log.LogInformation("No migration scripts found - skipping downgrade.");
                         return new DatabaseUpgradeResult(downgradeScripts, true, null, null);
                     }
 
