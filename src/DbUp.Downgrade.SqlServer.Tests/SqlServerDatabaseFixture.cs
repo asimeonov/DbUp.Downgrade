@@ -1,16 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
 using Testcontainers.MsSql;
 using Xunit;
 
 namespace DbUp.Downgrade.SqlServer.Tests
 {
-    [CollectionDefinition("MsSqlServer")]
     public class SqlServerDatabaseFixture : IAsyncLifetime
     {
-        private readonly MsSqlContainer _sqlContainer;
+        private readonly IDatabaseContainer _sqlContainer;
         public string ConnectionString => _sqlContainer.GetConnectionString();
 
         public SqlServerDatabaseFixture()
@@ -26,8 +25,6 @@ namespace DbUp.Downgrade.SqlServer.Tests
         public async Task InitializeAsync()
         {
             await _sqlContainer.StartAsync();
-
-            EnsureDatabase.For.SqlDatabase(ConnectionString);
         }
 
         public async Task DisposeAsync()

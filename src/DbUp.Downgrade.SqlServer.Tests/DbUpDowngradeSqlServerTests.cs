@@ -10,14 +10,20 @@ using Xunit;
 
 namespace DbUp.Downgrade.SqlServer.Tests
 {
-    [Collection("MsSqlServer")]
-    public class DbUpDowngradeSqlServerTests : IClassFixture<SqlServerDatabaseFixture>//IAsyncLifetime
+    public class DbUpDowngradeSqlServerTests : IClassFixture<SqlServerDatabaseFixture>, IDisposable
     {
         public readonly string _connectionString;
 
         public DbUpDowngradeSqlServerTests(SqlServerDatabaseFixture sqlServerDatabaseFixture)
         {
-            _connectionString = sqlServerDatabaseFixture.ConnectionString;
+            _connectionString = sqlServerDatabaseFixture.ConnectionString.Replace("master", "DbUpDowngradeTests");
+
+            EnsureDatabase.For.SqlDatabase(_connectionString);
+        }
+
+        public void Dispose()
+        {
+            DropDatabase.For.SqlDatabase(_connectionString);
         }
 
         [Fact]
@@ -35,7 +41,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var upgradeEngineBuilder = DeployChanges.To
                 .SqlDatabase(_connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
-                .LogToNowhere();
+                .LogToConsole();
 
             // Act
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
@@ -70,7 +76,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var upgradeEngineBuilder = DeployChanges.To
                 .SqlDatabase(_connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
-                .LogToNowhere();
+                .LogToConsole();
 
             // Act
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
@@ -100,7 +106,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 .SqlDatabase(_connectionString)
                 .WithScripts(upgradeScriptProvider)
                 .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
-                .LogToNowhere();
+                .LogToConsole();
 
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
@@ -138,7 +144,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 .SqlDatabase(_connectionString)
                 .WithScripts(upgradeScriptProvider)
                 .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
-                .LogToNowhere();
+                .LogToConsole();
 
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
@@ -176,7 +182,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 .SqlDatabase(_connectionString)
                 .WithScripts(upgradeScriptProvider)
                 .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
-                .LogToNowhere();
+                .LogToConsole();
 
             var result = upgradeEngineBuilder.BuildWithDowngrade(false).PerformUpgrade();
 
@@ -223,7 +229,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var upgradeEngineBuilder = DeployChanges.To
                 .SqlDatabase(_connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
-                .LogToNowhere();
+                .LogToConsole();
 
             // Act
             var result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
@@ -242,7 +248,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             upgradeEngineBuilder = DeployChanges.To
                 .SqlDatabase(_connectionString)
                 .WithScriptsAndDowngradeScriptsEmbeddedInAssembly<SqlDowngradeEnabledTableJournal>(Assembly.GetExecutingAssembly(), settings)
-                .LogToNowhere();
+                .LogToConsole();
 
             // Act
             result = upgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
@@ -282,7 +288,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
             var upgradeEngineBuilder = DeployChanges.To
                 .SqlDatabase(_connectionString)
                 .WithScript(new SqlScript("CreatePersonsTable", "CREATE TABLE Persons(PersonID int, LastName varchar(255), FirstName varchar(255));"))
-                .LogToNowhere();
+                .LogToConsole();
 
             upgradeEngineBuilder.Build().PerformUpgrade();
 
@@ -302,7 +308,7 @@ namespace DbUp.Downgrade.SqlServer.Tests
                 .SqlDatabase(_connectionString)
                 .WithScripts(upgradeScriptProvider)
                 .WithDowngradeTableProvider<SqlDowngradeEnabledTableJournal>(downgradeScriptProvider, new DefaultDowngradeScriptFinder())
-                .LogToNowhere();
+                .LogToConsole();
 
             var result = downgradeEngineBuilder.BuildWithDowngrade(true).PerformUpgrade();
 
