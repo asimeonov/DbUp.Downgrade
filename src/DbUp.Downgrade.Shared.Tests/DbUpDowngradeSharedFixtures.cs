@@ -85,8 +85,8 @@ namespace DbUp.Downgrade.Shared.Tests
         [Fact]
         public void FileSystemScriptProvider_SuccessfullyStoresDowngradeScripts()
         {
-            var upgradeScriptProvider = new FileSystemScriptProvider("FileSystemScripts\\Up", new FileSystemScriptOptions() { IncludeSubDirectories = true });
-            var downgradeScriptProvider = new FileSystemScriptProvider("FileSystemScripts\\Down", new FileSystemScriptOptions() { IncludeSubDirectories = true });
+            var upgradeScriptProvider = new FileSystemScriptProvider($"FileSystemScripts{Path.DirectorySeparatorChar}Up", new FileSystemScriptOptions() { IncludeSubDirectories = true });
+            var downgradeScriptProvider = new FileSystemScriptProvider($"FileSystemScripts{Path.DirectorySeparatorChar}Down", new FileSystemScriptOptions() { IncludeSubDirectories = true });
 
             var upgradeEngineBuilder = GetUpgradeEngineBuilder(upgradeScriptProvider, downgradeScriptProvider, new DefaultDowngradeScriptFinder());
 
