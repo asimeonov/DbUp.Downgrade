@@ -76,26 +76,24 @@ namespace DbUp.Downgrade.PostgreSQL.Tests
 
         public override void AssertColumnExists(string columnName)
         {
-            //using (var connection = new NpgsqlConnection(_connectionString))
-            //{
-            //    var command = new NpgsqlCommand($@"
-            //        SELECT COLUMN_NAME
-            //        FROM INFORMATION_SCHEMA.COLUMNS
-            //        WHERE TABLE_NAME = '{PostgresDowngradeEnabledTableJournal.DefaultTable}'
-            //          AND COLUMN_NAME = '{columnName}'
-            //          AND TABLE_SCHEMA = '{PostgreSqlTestContainerBase.DatabaseName}'", connection);
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                var command = new NpgsqlCommand($@"
+                    SELECT column_name 
+                    FROM information_schema.columns 
+                    WHERE table_name = '{PostgresDowngradeEnabledTableJournal.DefaultTable}' AND column_name = '{columnName}'", connection);
 
-            //    try
-            //    {
-            //        connection.Open();
-            //        var result = command.ExecuteScalar();
-            //        Assert.NotNull(result);
-            //    }
-            //    finally
-            //    {
-            //        connection.Close();
-            //    }
-            //}
+                try
+                {
+                    connection.Open();
+                    var result = command.ExecuteScalar();
+                    Assert.NotNull(result);
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
         }
 
         public override void AssertTableNoLongerExists(string tableName)

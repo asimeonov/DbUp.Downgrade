@@ -153,7 +153,7 @@ namespace DbUp.Downgrade.Shared.Tests
 
             Assert.True(result.Successful, result.Error?.Message);
 
-            AssertTableNoLongerExists("Values");
+            AssertTableNoLongerExists("values");
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace DbUp.Downgrade.Shared.Tests
 
             Assert.Equal(executedScriptsAndDowngradeScripts.Count, upgradeScripts.Count());
             
-            AssertTableNoLongerExists("Redirect");
+            AssertTableNoLongerExists("redirect");
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace DbUp.Downgrade.Shared.Tests
             //Assert
             Assert.True(result.Successful, result.Error?.Message);
 
-            AssertColumnExists("DowngradeScript");
+            AssertColumnExists("downgradescript");
         }
     }
 }

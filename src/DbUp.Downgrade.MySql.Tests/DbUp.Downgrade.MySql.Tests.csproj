@@ -10,6 +10,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="FileSystemScripts\Down\001\Script0004 - Redirects.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\001\Script0001 - Create tables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\001\Script0002 - Default feed.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\001\Script0003 - Settings.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FileSystemScripts\Up\001\Script0004 - Redirects.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="FolderUpAndDownScrips\DowngradeScripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0001 - Create tables.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0002 - Default feed.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0003 - Settings.sql" />
+    <EmbeddedResource Include="FolderUpAndDownScrips\Scripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0001 - Create tables.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0002 - Default feed.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0003 - Settings.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0004 - Redirects.sql" />
+    <EmbeddedResource Include="SuffixUpAndDownScripts\Script0004 - Redirects_downgrade.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,6 +56,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DbUp.Downgrade.MySql\DbUp.Downgrade.MySql.csproj" />
+    <ProjectReference Include="..\DbUp.Downgrade.Shared.Tests\DbUp.Downgrade.Shared.Tests.csproj" />
     <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
   </ItemGroup>
 
