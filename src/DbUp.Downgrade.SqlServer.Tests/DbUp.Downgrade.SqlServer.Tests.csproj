@@ -84,6 +84,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DbUp.Downgrade.Shared.Tests\DbUp.Downgrade.Shared.Tests.csproj" />
     <ProjectReference Include="..\DbUp.Downgrade.SqlServer\DbUp.Downgrade.SqlServer.csproj" />
     <ProjectReference Include="..\DbUp.Downgrade\DbUp.Downgrade.csproj" />
   </ItemGroup>

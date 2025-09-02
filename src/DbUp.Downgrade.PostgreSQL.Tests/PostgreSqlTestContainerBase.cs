@@ -9,12 +9,13 @@ namespace DbUp.Downgrade.PostgreSQL.Tests
     {
         private readonly IDatabaseContainer _sqlContainer;
         public string ConnectionString => _sqlContainer.GetConnectionString();
+        public const string DatabaseName = "DbUpDowngradeTests";
 
         public PostgreSqlTestContainerBase(string containerImage)
         {
             _sqlContainer = new PostgreSqlBuilder()
                 .WithImage(containerImage)
-                .WithDatabase("DbUpDowngradeTests")
+                .WithDatabase(DatabaseName)
                 .WithUsername("postgres")
                 .WithPassword("Your_password123")
                 .WithWaitStrategy(Wait.ForUnixContainer().UntilDatabaseIsAvailable(NpgsqlFactory.Instance))
