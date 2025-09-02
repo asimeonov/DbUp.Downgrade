@@ -38,7 +38,7 @@ namespace DbUp.Downgrade
 
         protected override string GetInsertJournalEntrySql(string scriptName, string applied, string downgradeScript)
         {
-            return $"insert into {FqSchemaTableName} (ScriptName, Applied, DowngradeScript) values ({scriptName}, {applied}, {downgradeScript})";
+            return $"insert into {FqSchemaTableName} (ScriptName, Applied, DowngradeScript) values ({scriptName}, {applied}, {downgradeScript ?? "NULL"})";
         }
 
         protected override string GetJournalEntriesSql()

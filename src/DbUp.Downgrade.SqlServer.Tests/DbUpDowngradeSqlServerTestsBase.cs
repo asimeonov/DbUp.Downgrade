@@ -10,13 +10,13 @@ using Xunit;
 
 namespace DbUp.Downgrade.SqlServer.Tests
 {
-    public class DbUpDowngradeSqlServerTests : IClassFixture<SqlServerDatabaseFixture>, IDisposable
+    public abstract class DbUpDowngradeSqlServerTestsBase : IDisposable
     {
         public readonly string _connectionString;
 
-        public DbUpDowngradeSqlServerTests(SqlServerDatabaseFixture sqlServerDatabaseFixture)
+        public DbUpDowngradeSqlServerTestsBase(string connectionString)
         {
-            _connectionString = sqlServerDatabaseFixture.ConnectionString.Replace("master", "DbUpDowngradeTests");
+            _connectionString = connectionString;
 
             EnsureDatabase.For.SqlDatabase(_connectionString);
         }

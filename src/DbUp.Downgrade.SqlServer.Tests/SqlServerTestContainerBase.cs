@@ -7,16 +7,15 @@ using Xunit;
 
 namespace DbUp.Downgrade.SqlServer.Tests
 {
-    public class SqlServerDatabaseFixture : IAsyncLifetime
+    public class SqlServerTestContainerBase : IAsyncLifetime
     {
         private readonly IDatabaseContainer _sqlContainer;
-        public string ConnectionString => _sqlContainer.GetConnectionString();
+        public string ConnectionString => _sqlContainer.GetConnectionString().Replace("master", "DbUpDowngradeTests");
 
-        public SqlServerDatabaseFixture()
+        public SqlServerTestContainerBase(string containerImage)
         {
             _sqlContainer = new MsSqlBuilder()
-                .WithName("sqlserver-test-container")
-                .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+                .WithImage(containerImage)
                 .WithPassword("Your_password123")
                 .WithWaitStrategy(Wait.ForUnixContainer().UntilDatabaseIsAvailable(SqlClientFactory.Instance))
                 .Build();
