@@ -1,0 +1,17 @@
+﻿CREATE TABLE `Entry` (
+    `Id` INT NOT NULL AUTO_INCREMENT,
+    `Name` VARCHAR(50) NOT NULL,
+    `Title` VARCHAR(200) NOT NULL,
+    `Summary` TEXT NOT NULL,
+    `IsVisible` BOOLEAN NOT NULL,
+    `Published` DATETIME NOT NULL,
+    `LatestRevisionId` INT NULL,
+    PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `Feed` (
+    `Id` INT NOT NULL AUTO_INCREMENT,
+    `Name` VARCHAR(100) NOT NULL,
+    `Title` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

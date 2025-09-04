@@ -1,0 +1,5 @@
+﻿CREATE TABLE "Redirect" (
+    "Id" SERIAL PRIMARY KEY,
+    "From" VARCHAR(255) NOT NULL,
+    "To" VARCHAR(255) NOT NULL
+);
