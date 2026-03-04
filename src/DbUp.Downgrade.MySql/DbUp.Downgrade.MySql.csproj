@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="dbup-mysql" Version="6.0.4" />
+    <PackageReference Include="dbup-mysql" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>
